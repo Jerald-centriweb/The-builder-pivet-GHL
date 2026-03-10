@@ -227,6 +227,10 @@ All fields prefixed `cf_` — stored on GHL Contact record.
 | How Heard | `cf_how_heard` | Dropdown | Google Search / Facebook / Instagram / Referral (friend/family) / Referral (professional) / Builder Website / House & Land / Other | Survey (auto) | Lead source attribution — 0 pts, informational only |
 | Partner Name | `cf_partner_name` | Text | Free text | Survey (auto) | For couple coordination workflow |
 | Partner Email | `cf_partner_email` | Email | Free text | Survey (auto) | For partner notification |
+| Design Status | `cf_design_status` | Dropdown | Plans Ready / Concept Only / Nothing Yet | Survey (auto) | Informs builder prep for discovery call |
+| Prior Quotes | `cf_prior_quotes` | Dropdown | First Contact / 1-2 Builders / 3+ Builders | Survey (auto) | Competitive landscape signal |
+| Site Challenges | `cf_site_challenges` | Dropdown | None / Some / Significant | Survey (auto) | Risk factor for project complexity |
+| Additional Notes | `cf_additional_notes` | Text (multi-line) | Free text | Survey (auto) | Open-ended project context from homeowner |
 
 ### Custom Object: Project (Optional)
 
