@@ -82,6 +82,8 @@ These rules govern every action you take in this codebase and GHL account.
 | Keep internal asset names stable across all builds | Only Custom Values change per builder |
 | Exit education sequences when `call-booked` tag is added | Prevents over-messaging |
 | Exclude Won / Not Now / Lost from stale reminders | Only active pipeline stages get reminders |
+| Include "Reply STOP to opt out" in every SMS template | Required under Australian Spam Act 2003 / ACMA regulations. GHL handles STOP keyword natively. |
+| Use `{{custom_values.google_review_link}}` in review SMS, never hardcode placeholders | Prevents broken links in client-facing messages |
 
 ### GHL Merge Field Syntax
 
@@ -105,6 +107,7 @@ These rules govern every action you take in this codebase and GHL account.
 | Appointment date | `{{appointment.date}}` |
 | Appointment time | `{{appointment.time}}` |
 | Proposal link | `{{proposal.link}}` |
+| Google review link | `{{custom_values.google_review_link}}` |
 
 ---
 
@@ -221,6 +224,9 @@ All fields prefixed `cf_` — stored on GHL Contact record.
 | Service 1 Fee | `cf_service_1_fee` | Number | e.g., 600 | Onboarding (manual) | Mirrors `custom_values.service_1_fee`. Used in Stripe. |
 | Service 2 Fee | `cf_service_2_fee` | Number | e.g., 6600 | Onboarding (manual) | Same for Phase 2 |
 | Lost Reason | `cf_lost_reason` | Dropdown | Budget too low / Chose competitor / Timeline changed / No response / Scope mismatch / Other | Builder (manual) | Set when moving to Lost |
+| How Heard | `cf_how_heard` | Dropdown | Google Search / Facebook / Instagram / Referral (friend/family) / Referral (professional) / Builder Website / House & Land / Other | Survey (auto) | Lead source attribution — 0 pts, informational only |
+| Partner Name | `cf_partner_name` | Text | Free text | Survey (auto) | For couple coordination workflow |
+| Partner Email | `cf_partner_email` | Email | Free text | Survey (auto) | For partner notification |
 
 ### Custom Object: Project (Optional)
 
@@ -250,7 +256,9 @@ Available on all GHL plans as of Oct 2025. Use when builder expects multi-projec
 | `stage-won` | WF (auto on Won) | Contact reached Won stage |
 | `stage-lost` | Builder (manual) | Contact moved to Lost |
 | `fee-tier-single` | Onboarding (manual) | Builder uses single-tier fee structure |
+| `fee-tier-two` | Onboarding (manual) | Builder uses two-tier fee structure (default, explicit for reporting) |
 | `fee-tier-none` | Onboarding (manual) | Builder uses no-fee structure |
+| `payment-manual` | Builder/OM (manual) | Off-platform payment confirmed — triggers same automation as Stripe webhook |
 
 ---
 
@@ -270,6 +278,7 @@ Available on all GHL plans as of Oct 2025. Use when builder expects multi-projec
 | `survey_link` | GHL survey URL | WF-01, WF-02 templates |
 | `calendar_link` | GHL calendar URL | Hot lead routing, survey reminders, education CTAs |
 | `portal_link` | GHL portal URL | WF-08 welcome email/SMS |
+| `google_review_link` | Google Business Profile review URL | WF-12 SMS-WIN-ReviewRequest |
 
 ### Configurable (Have Defaults — Override Per Builder)
 
@@ -372,6 +381,8 @@ These are NOT manually configured — workflows update them based on `cf_service
 | 11 | Site challenges | No challenges=10, Some=7, Significant=3 |
 | 12 | Number of builders | 1–2=10, First=10, 3+=5 |
 | 13 | Communication preference | 0 pts — informational only, maps to `cf_communication_preference` |
+| 14 | How did you hear about us? | 0 pts — informational only, maps to `cf_how_heard`. Used for lead source attribution and marketing ROI analysis. |
+| 15 | Will you be making this decision with a partner/spouse? | 0 pts — if Yes, collect partner name + email/phone. Maps to `cf_partner_name`, `cf_partner_email`. Used for couple coordination. |
 
 **Hard Disqualifiers:** Budget under $300K OR "No" to preconstruction fee → routes to Not Now regardless of all other scores.
 
@@ -404,7 +415,9 @@ These are NOT manually configured — workflows update them based on `cf_service
 | **Action 5** | Create builder task: "Prep for call with {{contact.name}} — review their survey answers before the call" |
 | **Wait** | 24 hours before appointment |
 | **Action 6** | Send reminder SMS: "Reminder: your call with {{custom_values.builder_name}} is tomorrow at {{appointment.time}}. Looking forward to chatting!" |
-| **No-show handling** | If appointment time passes with no status update → create task for builder: "{{contact.name}} may not have shown — confirm what happened and update pipeline" |
+| **No-show handling** | If appointment time passes with no status update → send SMS to homeowner: "Hi {{contact.first_name}}, we missed you on today's call. No worries — would you like to reschedule? {{custom_values.calendar_link}} — {{custom_values.builder_name}}. Reply STOP to opt out." + create task for builder: "{{contact.name}} may not have shown — confirm what happened and update pipeline" |
+| **Cancel handling** | Calendar event cancelled → remove `call-booked` tag (re-enables education sequence if still in Nurture) → create builder task: "{{contact.name}} cancelled their intro call — follow up" → if pipeline = Discovery Booked, consider moving back to previous stage |
+| **Reschedule handling** | Calendar event rescheduled → send updated confirmation SMS with new date/time → update builder task with new appointment details |
 | **QA test** | Book test calendar event → verify confirmation SMS + email → verify 24hr reminder fires → verify builder task created |
 
 ---
@@ -428,6 +441,7 @@ These are NOT manually configured — workflows update them based on `cf_service
 | **Action 8** | Send payment confirmation email `ET-PAY-Confirmation` + SMS `SMS-PAY-Confirmation` |
 | **Action 9** | Builder internal notification: "{{contact.name}} has paid their {{custom_values.current_service_fee_label}} — project is active." |
 | **Payment failure** | If Stripe payment fails → send retry email → create builder task |
+| **Manual payment override** | If tag `payment-manual` is added by builder/OM (for bank transfer, cheque, cash payments) → execute same actions as Stripe confirmation: add `payment-received` tag → move pipeline to Engaged → send confirmation email/SMS → trigger WF-08 portal access. This ensures automation works regardless of payment method. |
 | **QA test** | Move contact to Proposal Sent with `cf_service_phase = not_started` → verify Phase 1 proposal sends. Repeat with `cf_service_phase = phase_1` → verify Phase 2 content. Sign → verify Stripe link. Pay → verify pipeline moves to Engaged. |
 
 ---
@@ -505,7 +519,7 @@ All templates use `{{custom_values.xxx}}` merge fields. No hardcoded builder nam
 
 **`SMS-STL-Welcome`**
 ```
-Hi {{contact.first_name}}, thanks for reaching out to {{custom_values.builder_name}}! We'd love to help with your building project. To get started, please take our quick project questionnaire (about 3 mins): {{custom_values.survey_link}} — The {{custom_values.builder_name}} Team
+Hi {{contact.first_name}}, thanks for reaching out to {{custom_values.builder_name}}! We'd love to help with your building project. To get started, please take our quick project questionnaire (about 3 mins): {{custom_values.survey_link}} — The {{custom_values.builder_name}} Team. Reply STOP to opt out.
 ```
 
 **`ET-STL-01-Welcome`**
@@ -534,7 +548,7 @@ Warm regards,
 
 **`SMS-SRV-Reminder-1`** (72hrs)
 ```
-Hey {{contact.first_name}}, just checking in — have you had a chance to complete our quick project questionnaire? Here's the link: {{custom_values.survey_link}} — {{custom_values.builder_name}}
+Hey {{contact.first_name}}, just checking in — have you had a chance to complete our quick project questionnaire? Here's the link: {{custom_values.survey_link}} — {{custom_values.builder_name}}. Reply STOP to opt out.
 ```
 
 **`ET-SRV-Reminder-2`** (120hrs)
@@ -553,7 +567,7 @@ Prefer to chat instead? You can book a quick call with us here: {{custom_values.
 
 **`SMS-SRV-Final`** (192hrs)
 ```
-Hi {{contact.first_name}}, last nudge from us! We'd love to help with your building project. Complete our 3-min questionnaire here: {{custom_values.survey_link}} — or reply CALL and we'll ring you. — {{custom_values.builder_name}}
+Hi {{contact.first_name}}, last nudge from us! We'd love to help with your building project. Complete our 3-min questionnaire here: {{custom_values.survey_link}} — or reply CALL and we'll ring you. — {{custom_values.builder_name}}. Reply STOP to opt out.
 ```
 
 ---
@@ -562,7 +576,7 @@ Hi {{contact.first_name}}, last nudge from us! We'd love to help with your build
 
 **`SMS-QUAL-Hot-BookCall`** (fires immediately on score ≥80)
 ```
-Great news {{contact.first_name}}! Based on your project details, we'd love to chat. Book a quick call here: {{custom_values.calendar_link}} — {{custom_values.builder_name}}
+Great news {{contact.first_name}}! Based on your project details, we'd love to chat. Book a quick call here: {{custom_values.calendar_link}} — {{custom_values.builder_name}}. Reply STOP to opt out.
 ```
 
 **`ET-QUAL-Hot-BookCall`** (fires immediately on score ≥80)
@@ -600,10 +614,8 @@ We learn about your project, priorities, and budget through a quick questionnair
 Stage 2 — {{custom_values.service_1_name}}
 We prepare a {{custom_values.service_1_name}} — a professional estimate of your project cost based on your design brief. This gives you a realistic number to work with before spending money on detailed drawings.
 
-{{#if service_2_name}}
-Stage 3 — {{custom_values.service_2_name}}
+Stage 3 — {{custom_values.service_2_name}} *(Include this section only for two_tier builders — use workflow If/Then branch on fee_structure tag to send variant without this section for single_tier/no_fee)*
 Once the budget checks out, we move into a {{custom_values.service_2_name}} — a fully itemised estimate with subcontractor and supplier pricing. This is what you need to sign a construction contract.
-{{/if}}
 
 We've attached a one-page overview so you can see exactly what's included at each stage.
 
@@ -614,7 +626,7 @@ We've attached a one-page overview so you can see exactly what's included at eac
 
 **`SMS-EDU-01-Checkin`** (Day 1 — Touch 2)
 ```
-Hey {{contact.first_name}}, did you get a chance to read about our process? Any questions, just reply to this message — we're here to help. — {{custom_values.builder_name}}
+Hey {{contact.first_name}}, did you get a chance to read about our process? Any questions, just reply to this message — we're here to help. — {{custom_values.builder_name}}. Reply STOP to opt out.
 ```
 
 **`ET-EDU-02-Service-1-Explainer`** (Day 3 — Touch 3)
@@ -686,7 +698,7 @@ Our process is designed to give you confidence and clarity before you commit to 
 
 **`SMS-EDU-02-CTA`** (Day 9 — Touch 6)
 ```
-Hey {{contact.first_name}}, we've shared everything about our process over the past week. Ready to chat? Book a quick call: {{custom_values.calendar_link}} — {{custom_values.builder_name}}
+Hey {{contact.first_name}}, we've shared everything about our process over the past week. Ready to chat? Book a quick call: {{custom_values.calendar_link}} — {{custom_values.builder_name}}. Reply STOP to opt out.
 ```
 
 **`ET-EDU-05-CTA-Next-Step`** (Day 10 — Touch 7)
@@ -734,7 +746,7 @@ Once your payment is confirmed, we'll set up your personal project portal and ge
 
 **`SMS-PROP-Sent`**
 ```
-Hi {{contact.first_name}}, we've just sent through your {{custom_values.agreement_title}} for your project. Please check your email to review and sign. Any questions, just reply here! — {{custom_values.builder_name}}
+Hi {{contact.first_name}}, we've just sent through your {{custom_values.agreement_title}} for your project. Please check your email to review and sign. Any questions, just reply here! — {{custom_values.builder_name}}. Reply STOP to opt out.
 ```
 
 **`ET-PROP-Reminder-48hr`** (if unsigned after 48hrs)
@@ -775,7 +787,7 @@ We're excited to get started.
 
 **`SMS-PAY-Confirmation`**
 ```
-Payment received — thank you! Your {{custom_values.builder_name}} project portal is now live: {{custom_values.portal_link}}
+Payment received — thank you! Your {{custom_values.builder_name}} project portal is now live: {{custom_values.portal_link}}. Reply STOP to opt out.
 ```
 
 ---
@@ -804,7 +816,7 @@ Questions at any time? Reply to this email or call {{custom_values.builder_phone
 
 **`SMS-WIN-ReviewRequest`** (fires 14 days after Won stage)
 ```
-Hi {{contact.first_name}}, it's been great working with you on your project. If you're happy with the process, we'd love it if you could leave us a quick Google review — it helps other homeowners find us: [Google Review Link]. Thanks so much! — {{custom_values.builder_name}}
+Hi {{contact.first_name}}, it's been great working with you on your project. If you're happy with the process, we'd love it if you could leave us a quick Google review — it helps other homeowners find us: {{custom_values.google_review_link}}. Thanks so much! — {{custom_values.builder_name}}. Reply STOP to opt out.
 ```
 
 ---
@@ -1079,6 +1091,7 @@ Run this before every go-live. All 18 tests must pass.
 15. Intro call duration preference (default: 30 min)
 16. Specific qualifying criteria (if any deviations from default scoring)
 17. `fee_structure` preference: `two_tier` / `single_tier` / `no_fee`
+18. Google Business Profile review link (for review request automation)
 
 ### 5-Day Build Schedule
 
