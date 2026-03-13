@@ -5,7 +5,11 @@ GHL Sub-Account Audit Data Collector — PreBuild Autopilot
 Run this script locally where you have network access to the GHL API.
 
 Usage:
-    python3 ghl_audit_collector.py --api-key "pit-335bf0ee-b8e4-4eaa-be07-997052ceb717"
+    python3 ghl_audit_collector.py \
+        --api-key "pit-335bf0ee-b8e4-4eaa-be07-997052ceb717" \
+        --location-id "YOUR_LOCATION_ID"
+
+Find your Location ID: GHL → Settings → Company → Locations → copy the ID
 
 Output: audit_data.json (comprehensive dump of all GHL sub-account data)
 """
@@ -82,12 +86,12 @@ def paginate(path, api_key, key, params=None):
     return all_items
 
 
-def collect_all(api_key):
-    audit = {"collected_at": datetime.utcnow().isoformat(), "sections": {}}
+def collect_all(api_key, location_id):
+    audit = {"collected_at": datetime.utcnow().isoformat(), "location_id": location_id, "sections": {}}
 
     # 1. Custom Fields
     print("[1/14] Fetching custom fields...")
-    audit["sections"]["custom_fields"] = api_get("/locations/custom-fields", api_key)
+    audit["sections"]["custom_fields"] = api_get(f"/locations/{location_id}/customFields", api_key)
     time.sleep(0.3)
 
     # 2. Contacts (sample of 100)
@@ -145,12 +149,12 @@ def collect_all(api_key):
 
     # 11. Custom Values
     print("[11/14] Fetching custom values...")
-    audit["sections"]["custom_values"] = api_get("/locations/custom-values", api_key)
+    audit["sections"]["custom_values"] = api_get(f"/locations/{location_id}/customValues", api_key)
     time.sleep(0.3)
 
     # 12. Location info
     print("[12/14] Fetching location info...")
-    audit["sections"]["location"] = api_get("/locations/search", api_key)
+    audit["sections"]["location"] = api_get(f"/locations/{location_id}", api_key)
     time.sleep(0.3)
 
     # 13. Campaigns / Email Templates (if available)
@@ -223,6 +227,7 @@ def analyze_contacts(contacts_data):
 def main():
     parser = argparse.ArgumentParser(description="GHL Sub-Account Audit Collector")
     parser.add_argument("--api-key", required=True, help="GHL Private Integration API Key")
+    parser.add_argument("--location-id", required=True, help="GHL Location ID (Settings → Company → Locations)")
     parser.add_argument("--output", default="audit_data.json", help="Output file path")
     args = parser.parse_args()
 
@@ -230,10 +235,11 @@ def main():
     print("GHL Sub-Account Audit Collector — PreBuild Autopilot")
     print("=" * 60)
     print(f"API Key: {args.api_key[:10]}...{args.api_key[-4:]}")
+    print(f"Location ID: {args.location_id}")
     print(f"Output: {args.output}")
     print()
 
-    audit = collect_all(args.api_key)
+    audit = collect_all(args.api_key, args.location_id)
 
     # Run contact analysis
     if "contacts" in audit["sections"]:

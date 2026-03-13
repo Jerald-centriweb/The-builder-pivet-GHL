@@ -723,6 +723,34 @@ Or simply reply to this email with your questions.
 
 ---
 
+### Booking Confirmation Template
+
+**`ET-BOOK-Confirmation`** (triggered by WF-05 on calendar event created)
+Subject: `Your call with {{custom_values.builder_name}} is confirmed`
+```
+Hi {{contact.first_name}},
+
+Your intro call with {{custom_values.builder_name}} is confirmed.
+
+Date: {{appointment.date}}
+Time: {{appointment.time}}
+Format: We'll call you on {{contact.phone}}
+
+Before the call, it helps to have these things in mind:
+— Your rough build budget or budget range
+— Whether you've started on plans or have a designer in mind
+— Your preferred start timeline
+
+If you need to reschedule, you can do so here: {{custom_values.calendar_link}}
+
+Looking forward to chatting.
+
+{{custom_values.builder_name}}
+{{custom_values.builder_phone}}
+```
+
+---
+
 ### Proposal Templates
 
 **`ET-PROP-Agreement-Sent`** (triggered by WF-06 when pipeline = Proposal Sent)
