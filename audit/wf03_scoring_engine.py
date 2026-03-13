@@ -132,9 +132,30 @@ SCORING_RUBRIC = {
         "No, I'm only looking for free quotes": "DISQUALIFY",
         "No": "DISQUALIFY",
     },
+    # Referral source — up to 15 pts. Maps to cf_how_heard.
+    # Spec Section 7 Q8 scores this; Section 5 originally listed 0 pts (informational only).
+    # Decision: score it — referral quality is one of the strongest conversion predictors.
+    "referral_source": {
+        "Referral (friend/family)": 15,
+        "Referral (professional)": 15,
+        "Referral - friend or family": 15,
+        "Referral - professional (architect, broker, etc.)": 15,
+        "Referral": 15,
+        "Builder Website": 8,
+        "Google Search": 5,
+        "Facebook": 5,
+        "Instagram": 5,
+        "Facebook / Instagram": 5,
+        "House & Land": 5,
+        "Other": 5,
+    },
 }
 
-MAX_RAW_SCORE = 145  # Sum of all max points
+# MAX_RAW_SCORE = sum of all max points across SCORING_RUBRIC
+# Fields: project_type(10) + land_status(15) + design_status(15) + timeline(15)
+#       + prior_quotes(10) + budget_range(15) + financing_status(15)
+#       + decision_maker(10) + site_challenges(10) + open_to_fee(15) + referral_source(15)
+MAX_RAW_SCORE = 145  # Correct with referral_source included
 
 # Score bands (on normalised 0-100 scale)
 HOT_THRESHOLD = 80
@@ -271,12 +292,11 @@ def update_ghl_contact(contact_id: str, score_result: dict, api_key: str, locati
         with urllib.request.urlopen(req, timeout=15) as resp:
             result = json.loads(resp.read().decode())
             print(f"Contact {contact_id} updated: score={score_result['qualification_score']}, temp={score_result['lead_temperature']}")
-            return result
     except urllib.error.HTTPError as e:
-        print(f"Error updating contact: {e.code} - {e.read().decode()}")
+        print(f"Error updating contact fields: {e.code} - {e.read().decode()}")
         return None
 
-    # 2. Remove tags (separate API call)
+    # 2. Remove tags (separate API call — must be outside the try/return above)
     for tag in score_result.get("tags_to_remove", []):
         try:
             remove_req = urllib.request.Request(
@@ -288,6 +308,8 @@ def update_ghl_contact(contact_id: str, score_result: dict, api_key: str, locati
             urllib.request.urlopen(remove_req, timeout=15)
         except Exception:
             pass
+
+    return result
 
 
 # --- DEPLOYMENT HANDLERS ---
