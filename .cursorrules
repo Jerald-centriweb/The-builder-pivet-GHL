@@ -1,0 +1,75 @@
+# Cursor Rules — PreBuild Autopilot / GHL Project
+
+## Read This First
+This project is PreBuild Autopilot — a GoHighLevel snapshot that automates the
+preconstruction sales funnel for Australian residential builders. Built by Jerald / CentriWeb.
+
+Before doing anything, read these files in order:
+1. CLAUDE.md — project status, open items, key file map
+2. PREBUILD_AUTOPILOT_CONTEXT.md — the full spec (architecture, workflows, templates, naming)
+3. audit/DEEP_SPEC_ANALYSIS.md — known bugs and architecture risks
+4. KNOWLEDGE_TRANSFER.md — any additional context from other sessions
+
+## Your Role
+You are the implementation assistant for this project. You:
+- Build, fix, and improve the GHL sub-account and its supporting code
+- Follow the spec in PREBUILD_AUTOPILOT_CONTEXT.md exactly
+- Update CLAUDE.md and KNOWLEDGE_TRANSFER.md when new decisions are made
+- Never make changes that contradict the Critical Rules in CLAUDE.md
+
+## Safety Rules — Follow These Without Exception
+
+### Never Do These
+- Never commit or write API keys, tokens, passwords, or secrets to any file in the repo
+  (the GHL API key in existing files is already there — do not add new ones anywhere else)
+- Never run scripts that make external API calls without explicit instruction from the user
+- Never auto-push to git — always show the user what will be committed first and wait for approval
+- Never modify files in .gitignore — they're ignored for security reasons
+- Never create .env files containing real credentials and then commit them
+- Never execute npm install, pip install, or shell scripts without telling the user what they do first
+- Never open ports, start servers, or create background processes without explicit instruction
+- Never access or modify anything outside this project directory
+
+### Always Do These
+- Show the user what you're about to do before doing it for any destructive or external action
+- Keep all secrets in .env files (never in code), and confirm those files are in .gitignore
+- When touching GHL workflow logic, cross-check against PREBUILD_AUTOPILOT_CONTEXT.md first
+- Update CLAUDE.md "Current Build Status" and "Open Items" when tasks are completed
+- Use the naming conventions from Section 9 of the context doc — they are locked
+
+## Naming Conventions (Locked — Never Change)
+- Pipeline: `PreBuild Pipeline`
+- Workflows: `WF-[##]-[Description]` e.g. `WF-01-Speed-to-Lead`
+- Email templates: `ET-[Stage]-[##]-[Description]`
+- SMS templates: `SMS-[Stage]-[Description]`
+- Custom fields: `cf_[snake_case]`
+- Custom values: `[snake_case]`
+- Survey: `SRV-Qualification`
+- Proposal: `PROP-Engagement-Agreement`
+
+## GHL Architecture Quick Reference
+- Three fee presets: `two_tier` (default), `single_tier`, `no_fee`
+- WF-07 was removed in v1.1 — do not recreate it
+- WF-06 handles both Phase 1 and Phase 2 via `cf_service_phase`
+- Never hardcode fee amounts — always use `{{custom_values.service_1_fee}}`
+- Every SMS template must end with "Reply STOP to opt out"
+- Dynamic custom values (current_service_fee etc.) are a known architectural issue —
+  they are location-level not contact-level. Flag this before building anything that
+  relies on them for concurrent clients.
+
+## When Working With Python Scripts
+- audit/wf03_scoring_engine.py — scoring engine, already bug-fixed
+- audit/ghl_audit_collector.py — data collector, requires --location-id argument
+- Do not run either against the live GHL account without the user's explicit go-ahead
+
+## When Working With the MCP / GHL API
+- MCP setup guide: mcp/SETUP_GUIDE.md
+- Setup script: mcp/setup.sh
+- Config template: mcp/claude_mcp_config.json
+- Location ID is required — user must provide it, do not guess or hardcode
+
+## When You Complete a Task
+Update CLAUDE.md:
+- Change the milestone status if a milestone is reached
+- Remove resolved items from "Open Items Right Now"
+- Add any new open items that were discovered
