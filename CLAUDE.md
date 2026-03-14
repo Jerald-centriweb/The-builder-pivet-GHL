@@ -66,7 +66,8 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 | `audit/GHL_VERIFICATION_CHECKLIST.md` | Section-by-section checklist to verify live GHL account against the spec. |
 | `audit/wf03_scoring_engine.py` | External scoring engine for WF-03. Bugs fixed. Deploy to n8n/Cloud Function/Lambda. |
 | `audit/ghl_audit_collector.py` | Pulls live data from GHL. Run on VPS with `--api-key` + `--location-id`. |
-| `audit/audit_data.json` | Live GHL account data (generated on VPS after setup — gitignored). |
+| `audit/audit_data.json` | Live GHL account data (full JSON dump from collector). |
+| `audit/GHL_SUBACCOUNT_DUMP.md` | Human-readable summary of live sub-account for Claude context. |
 | `audit/PREBUILD_AUTOPILOT_AUDIT_REPORT.md` | Full architecture audit (spec-based, not live account). |
 | `audit/PRIORITY_ACTION_MATRIX.md` | Execution order for all known tasks. |
 | `audit/SELLABILITY_STRATEGY.md` | Productisation and demo strategy. |

@@ -1,5 +1,7 @@
 # GHL MCP Setup — Connect Claude to Your GHL Account
 
+Uses the [GoHighLevel-MCP](https://github.com/mastanley13/GoHighLevel-MCP) server — a safe, community-maintained repo with 269+ tools for GHL API access.
+
 This gives Claude Code (in your terminal) direct live access to your GHL sub-account.
 Once set up, Claude can inspect workflows, custom fields, contacts, surveys, pipelines, and templates — and make changes if you ask it to.
 

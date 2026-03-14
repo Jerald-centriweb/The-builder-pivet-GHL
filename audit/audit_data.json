@@ -1,0 +1,873 @@
+{
+  "collected_at": "2026-03-14T00:18:28.163336",
+  "location_id": "cVCso4OlgGoOoXMpbxxA",
+  "sections": {
+    "custom_fields": {
+      "customFields": [
+        {
+          "id": "4sz70FQcItdNAYWypP75",
+          "name": "cf_finance_status",
+          "model": "contact",
+          "fieldKey": "contact.cf_finance_status",
+          "placeholder": "",
+          "dataType": "SINGLE_OPTIONS",
+          "position": 1200,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.802Z",
+          "standard": false,
+          "picklistOptions": [
+            "Yes, fully approved",
+            "Yes, pre-approval in place",
+            "We're in the process of arranging finance",
+            "We're using cash / equity",
+            "Not yet, still researching costs first"
+          ]
+        },
+        {
+          "id": "65TbdMo6scjMuTjJkqpw",
+          "name": "How did you arrive at that budget figure?",
+          "model": "contact",
+          "fieldKey": "contact.cf_budget_how",
+          "placeholder": "",
+          "dataType": "SINGLE_OPTIONS",
+          "position": 350,
+          "documentType": "field",
+          "parentId": "9FnvOHrvltkxU4GkB6DQ",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-26T13:19:13.136Z",
+          "standard": false,
+          "picklistOptions": [
+            "I spoke to a bank or broker and got a borrowing figure",
+            "I researched build costs online / got rough quotes",
+            "A family member or friend built recently and gave me a figure",
+            "It's a rough number \u2014 I'm not sure if it's realistic"
+          ]
+        },
+        {
+          "id": "BnhU18zxb5FTowoII5Bv",
+          "name": "cf_partner_email",
+          "model": "contact",
+          "fieldKey": "contact.cf_partner_email",
+          "placeholder": "",
+          "dataType": "TEXT",
+          "position": 1350,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.855Z",
+          "standard": false
+        },
+        {
+          "id": "GvDfWDn1fVXi7zzeAhIq",
+          "name": "Our process involves a paid preconstruction consultation to prepare a detailed budget and project scope before any construction begins. Are you open to this?",
+          "model": "contact",
+          "fieldKey": "contact.cf_open_to_fee",
+          "placeholder": "",
+          "dataType": "SINGLE_OPTIONS",
+          "position": 750,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.853Z",
+          "standard": false,
+          "picklistOptions": [
+            "Yes, I understand professional advice has a cost",
+            "I'd like to understand more about what's included first",
+            "I'm not sure, it depends on the cost",
+            "No, I expect quotes and consultations to be free"
+          ]
+        },
+        {
+          "id": "Q3J4eIjb6jBNWShBassD",
+          "name": "cf_lead_score",
+          "model": "contact",
+          "fieldKey": "contact.cf_lead_score",
+          "placeholder": "",
+          "dataType": "NUMERICAL",
+          "position": 900,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.799Z",
+          "standard": false
+        },
+        {
+          "id": "Qrl9ArsqpOoTJLwaEm3Z",
+          "name": "cf_service_phase",
+          "model": "contact",
+          "fieldKey": "contact.cf_service_phase",
+          "placeholder": "",
+          "dataType": "SINGLE_OPTIONS",
+          "position": 1150,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.804Z",
+          "standard": false,
+          "picklistOptions": [
+            "Phase 1 - Budget Assessment",
+            "Phase 2 - Detailed Estimate"
+          ]
+        },
+        {
+          "id": "aaxgKaLrDXpu3WkUEBDG",
+          "name": "cf_contact_role",
+          "model": "contact",
+          "fieldKey": "contact.cf_contact_role",
+          "placeholder": "",
+          "dataType": "SINGLE_OPTIONS",
+          "position": 850,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.788Z",
+          "standard": false,
+          "picklistOptions": [
+            "Primary",
+            "Partner"
+          ]
+        },
+        {
+          "id": "agfjXtjPV85k1yIIxNAt",
+          "name": "cf_budget_range",
+          "model": "contact",
+          "fieldKey": "contact.cf_budget_range",
+          "placeholder": "",
+          "dataType": "SINGLE_OPTIONS",
+          "position": 1050,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.844Z",
+          "standard": false,
+          "picklistOptions": [
+            "Under $300K",
+            "$300K\u2013$500K",
+            "$500K\u2013$800K",
+            "$800,000 \u2013 $1,200,000",
+            "$1,200,000+",
+            "I'm not sure yet, I need help understanding costs"
+          ]
+        },
+        {
+          "id": "j4VfskwKJcjzjx1EhaI8",
+          "name": "cf_partner_phone",
+          "model": "contact",
+          "fieldKey": "contact.cf_partner_phone",
+          "placeholder": "",
+          "dataType": "PHONE",
+          "position": 950,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.861Z",
+          "standard": false
+        },
+        {
+          "id": "mI294jc8bR3ocPSUyyaZ",
+          "name": "cf_land_status",
+          "model": "contact",
+          "fieldKey": "contact.cf_land_status",
+          "placeholder": "",
+          "dataType": "SINGLE_OPTIONS",
+          "position": 800,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.848Z",
+          "standard": false,
+          "picklistOptions": [
+            "Yes, I own the land/property",
+            "We're under contract to purchase",
+            "We're actively looking for land",
+            "Not applicable \u2014 I'm renovating my existing home"
+          ]
+        },
+        {
+          "id": "o5VzkmKKYAKbobEtgk0E",
+          "name": "cf_household_id",
+          "model": "contact",
+          "fieldKey": "contact.cf_household_id",
+          "placeholder": "",
+          "dataType": "TEXT",
+          "position": 1100,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.847Z",
+          "standard": false
+        },
+        {
+          "id": "o8Mmf8PKrWkhyMgFNsxC",
+          "name": "cf_project_type",
+          "model": "contact",
+          "fieldKey": "contact.cf_project_type",
+          "placeholder": "",
+          "dataType": "SINGLE_OPTIONS",
+          "position": 1250,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.784Z",
+          "standard": false,
+          "picklistOptions": [
+            "New build",
+            "Knockdown rebuild",
+            "Major renovation",
+            "Extension or addition",
+            "Not sure yet"
+          ]
+        },
+        {
+          "id": "pL3PpzFrHXXaYhymuGx5",
+          "name": "cf_partner_name",
+          "model": "contact",
+          "fieldKey": "contact.cf_partner_name",
+          "placeholder": "",
+          "dataType": "TEXT",
+          "position": 1000,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.796Z",
+          "standard": false
+        },
+        {
+          "id": "rhqrfzfvIDV3IpN3VnMm",
+          "name": "When are you hoping to start construction?",
+          "model": "contact",
+          "fieldKey": "contact.cf_timeline",
+          "placeholder": "",
+          "dataType": "SINGLE_OPTIONS",
+          "position": 1300,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.805Z",
+          "standard": false,
+          "picklistOptions": [
+            "As soon as possible",
+            "Within 3-6 months",
+            "In 6-12 months",
+            "12+ months away",
+            "I'm just exploring at this stage"
+          ]
+        },
+        {
+          "id": "rnRryJlMEJF6R7GczxmQ",
+          "name": "cf_suburb",
+          "model": "contact",
+          "fieldKey": "contact.cf_suburb",
+          "placeholder": "",
+          "dataType": "TEXT",
+          "position": 1400,
+          "documentType": "field",
+          "parentId": "9J5apjY7yE5DoT87ovOS",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "dateAdded": "2026-02-25T14:41:35.846Z",
+          "standard": false
+        }
+      ],
+      "traceId": "33a41de5-3c96-4623-80cc-67ffc9526b7c"
+    },
+    "contacts": {
+      "contacts": [],
+      "total": 0,
+      "traceId": "63d3424a-5e36-4780-9320-6e15a5063e0e"
+    },
+    "pipelines": {
+      "pipelines": [
+        {
+          "stages": [
+            {
+              "id": "66dfc3ca-9268-4210-8b5e-4a1e4d6e40b7",
+              "name": "New Enquiry",
+              "originId": "NzE0NDYyYTQtZjQ0OS00ZGE1LTliNTktNTY2NzQxNTBjOGYy",
+              "position": 0,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "0e125a91-9bad-4807-8f5c-9459f9c7bd18",
+              "name": "Survey Completed",
+              "originId": "NDliY2E0ZDYtODEwYS00MmQwLWJjZjgtMDRjNWNmNTBlOGRj",
+              "position": 1,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "8883cbd1-098e-4829-bfa2-1bd558653e28",
+              "name": "Qualified - Hot",
+              "originId": "MGNmZGMwYjEtNjYzYS00OTYxLWE0ZjUtMDUxMWY0NmQyNzNk",
+              "position": 2,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "333e7953-2cea-472e-875e-33d14dd286a8",
+              "name": "Nurture - Warm",
+              "originId": "MWI1MzhmY2YtZjNiMi00NjA3LTkyZTgtNjc5YWQzOGU1MmI1",
+              "position": 3,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "91b6d5c4-2337-40e1-80ea-bbf01e93c8a7",
+              "name": "Intro Call Booked",
+              "originId": "ZjQxYzczNjktZjMwZi00MDNmLTk3NWUtZDU2ODVlNTM3Njc4",
+              "position": 4,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "b35dabb7-d871-4b3c-945a-0a3ad26129a7",
+              "name": "Proposal Sent",
+              "originId": "MTJlNTllNDgtNmNjMy00ZTE2LWE3MzctNjA1OWM2OTFiNTgw",
+              "position": 5,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "c0a80e7f-6347-4f9b-87ad-f9062cbc4ca7",
+              "name": "Engaged",
+              "originId": "ZGYzZjFmYTQtNjk5ZC00NGE1LWJlMzktNmRkNmE5M2M5ZmM3",
+              "position": 6,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "617535ae-a933-440c-96c6-06bf25675d9e",
+              "name": "Delivered",
+              "originId": "N2QwZWM5MjUtMjYwMS00NWE2LTg2M2UtMDg5Y2M5YjU5ZTBm",
+              "position": 7,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "448d8524-9d58-41f7-b6eb-c8f048d4cb28",
+              "name": "Won",
+              "originId": "YTgzMGI1NDItNjk0NS00MzczLTliMmEtY2NhZTc3OWRjMjRk",
+              "position": 8,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "a82b6def-f219-468b-b45c-2ef1032785d3",
+              "name": "Not Now",
+              "originId": "MWQyMWM0ZDMtZmIwMy00ZjRiLThjY2UtNWNmM2VlNmYzOWNi",
+              "position": 9,
+              "showInFunnel": true,
+              "showInPieChart": true
+            },
+            {
+              "id": "e2bd3aa2-0f5d-42e3-843f-fb63fd1070df",
+              "name": "Lost",
+              "originId": "OTAxY2VhMGMtZTJjMi00NzY5LWE1YzYtNDQ1NWM3N2NhMDA2",
+              "position": 10,
+              "showInFunnel": true,
+              "showInPieChart": true
+            }
+          ],
+          "dateAdded": "2026-02-25T14:41:43.976Z",
+          "dateUpdated": "2026-02-25T14:41:43.977Z",
+          "name": "Prebuild Pipeline",
+          "originId": "BTGrTxiiFedNARJ2SQR9",
+          "id": "KRZs6JZq3qKVnJyvTmZh"
+        }
+      ],
+      "traceId": "ae5c7ff1-04e2-4303-afd7-dcd680689f4d"
+    },
+    "opportunities_KRZs6JZq3qKVnJyvTmZh": {
+      "opportunities": [],
+      "meta": {
+        "total": 0,
+        "nextPageUrl": null,
+        "startAfterId": null,
+        "startAfter": null,
+        "currentPage": 1,
+        "nextPage": "",
+        "prevPage": null
+      },
+      "traceId": "80674102-4976-4aff-910a-c4a6f1350dfe"
+    },
+    "workflows": {
+      "workflows": [
+        {
+          "id": "9f2b93e5-9662-4749-b9d0-6b40c5c1b6a2",
+          "name": "WF-01-Speed-to-Lead",
+          "status": "draft",
+          "version": 2,
+          "createdAt": "2026-02-25T14:41:55.437Z",
+          "updatedAt": "2026-02-25T14:42:00.123Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "17891e4d-c278-4895-a3f7-357c3178fb6b",
+          "name": "WF-02-Survey-Reminders",
+          "status": "draft",
+          "version": 2,
+          "createdAt": "2026-02-25T14:41:55.741Z",
+          "updatedAt": "2026-02-25T14:42:00.097Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "d52e3147-c48a-44d3-af52-6680e5573b47",
+          "name": "WF-03-Scoring-and-Routing",
+          "status": "draft",
+          "version": 95,
+          "createdAt": "2026-02-25T14:41:55.956Z",
+          "updatedAt": "2026-02-26T14:41:00.025Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "bbfe1ca0-14a6-4452-baea-7128661642b4",
+          "name": "WF-04-Education-Sequence",
+          "status": "draft",
+          "version": 2,
+          "createdAt": "2026-02-25T14:41:56.217Z",
+          "updatedAt": "2026-02-25T14:42:00.123Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "5408bfe2-e1c0-4220-aae5-81c673113183",
+          "name": "WF-05-Booking-Flow",
+          "status": "draft",
+          "version": 2,
+          "createdAt": "2026-02-25T14:41:56.425Z",
+          "updatedAt": "2026-02-25T14:42:00.095Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "2fc5067c-be83-46d3-9a8c-550ce02e4a4e",
+          "name": "WF-06-Proposal-and-Payment",
+          "status": "draft",
+          "version": 2,
+          "createdAt": "2026-02-25T14:41:56.662Z",
+          "updatedAt": "2026-02-25T14:42:00.087Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "bd849e9f-9361-4526-a3b6-98b976c85d17",
+          "name": "WF-09-Stage-Notifications",
+          "status": "draft",
+          "version": 2,
+          "createdAt": "2026-02-25T14:41:56.846Z",
+          "updatedAt": "2026-02-25T14:42:00.292Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "c7241790-4b89-4995-b7fa-a1dba97d24db",
+          "name": "WF-10-Stale-Lead-Reminders",
+          "status": "draft",
+          "version": 2,
+          "createdAt": "2026-02-25T14:41:57.060Z",
+          "updatedAt": "2026-02-25T14:41:59.904Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "d06709cc-f1fc-4736-8f5b-391682f4c1cc",
+          "name": "WF-11-Partner-Notifications",
+          "status": "draft",
+          "version": 2,
+          "createdAt": "2026-02-25T14:41:57.255Z",
+          "updatedAt": "2026-02-25T14:42:00.127Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "1c1a6318-4ff8-41f1-9a49-ea2176c9576f",
+          "name": "WF-12-Review-Request",
+          "status": "draft",
+          "version": 2,
+          "createdAt": "2026-02-25T14:41:57.742Z",
+          "updatedAt": "2026-02-25T14:42:00.123Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        }
+      ],
+      "traceId": "7edd708f-9c36-4c99-81e7-b021c57656b4"
+    },
+    "forms": {
+      "forms": [
+        {
+          "id": "x1jLoeSHaBKZXm8Gm0gu",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "name": "FRM-Lead-Intake"
+        },
+        {
+          "id": "GbemuaflhwNAilmnqgEf",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "name": "Book a demo"
+        },
+        {
+          "id": "ugnDa7Hh1lQNb52GUypu",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "name": "SRV-Qualification-Survey"
+        }
+      ],
+      "total": 3,
+      "traceId": "65eeec44-0688-4c80-8c79-4694306bbb0c"
+    },
+    "surveys": {
+      "surveys": [
+        {
+          "id": "J30zhHTAz8daVE7wZP7P",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "name": "SRV-Qualification-Survey"
+        }
+      ],
+      "total": 1,
+      "traceId": "5ad86f8f-1a81-4a73-b603-8a1835e49e8c"
+    },
+    "calendars": {
+      "calendars": [
+        {
+          "id": "b4uPmlCoYV7J96XJZBsD",
+          "notifications": [],
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "teamMembers": [],
+          "eventType": "RoundRobin_OptimizeForAvailability",
+          "name": "CAL-Intro-Call",
+          "description": "",
+          "widgetSlug": "cal-intro-call-demo-9faa41b6-a29d-4ec6-8d79-cd88d220fe46",
+          "calendarType": "round_robin",
+          "widgetType": "default",
+          "eventTitle": "{{contact.name}}",
+          "eventColor": "#039BE5",
+          "slotDuration": 30,
+          "slotDurationUnit": "mins",
+          "slotInterval": 30,
+          "slotIntervalUnit": "mins",
+          "slotBuffer": 0,
+          "slotBufferUnit": "mins",
+          "appoinmentPerSlot": 1,
+          "appoinmentPerDay": "",
+          "openHours": {},
+          "enableRecurring": false,
+          "recurring": {
+            "count": 1,
+            "bookingOption": "skip",
+            "bookingOverlapDefaultStatus": "",
+            "interval": null,
+            "freq": "DAILY",
+            "monthDays": [],
+            "weekDays": []
+          },
+          "formId": "",
+          "stickyContact": false,
+          "autoConfirm": true,
+          "googleInvitationEmails": true,
+          "allowReschedule": true,
+          "allowCancellation": true,
+          "shouldAssignContactToTeamMember": false,
+          "shouldSkipAssigningContactForExisting": false,
+          "notes": "Phone:- {{contact.phone}}\nEmail:- {{contact.email}}\n\nNeed to make a change to this event?\nReschedule:-\n{{reschedule_link}}\n\nCancel:-\n{{cancellation_link}}",
+          "pixelId": "",
+          "formSubmitType": "ThankYouMessage",
+          "formSubmitThanksMessage": "Thank you for your appointment request. We will contact you shortly to confirm your request. Please call our office at {{contactMethod}} if you have any questions.",
+          "availabilityType": 0,
+          "availabilities": [],
+          "guestType": "collect_detail",
+          "consentLabel": "I confirm that I want to receive content from this company using any contact information I provide.",
+          "allowBookingAfterUnit": "days",
+          "allowBookingAfter": 0,
+          "allowBookingForUnit": "days",
+          "preBuffer": 0,
+          "preBufferUnit": "mins",
+          "isActive": false
+        }
+      ],
+      "traceId": "41a93c50-10e1-9638-8bd1-57010feb4dd3"
+    },
+    "tags": {
+      "tags": [
+        {
+          "id": "MXOLGdGZbJieXmd94skG",
+          "name": "lead-cold",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "tKwww2XKloLqXK8q7CvL",
+          "name": "lead-hot",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "Dj7zf3vRSdlS1gc6ad3u",
+          "name": "lead-warm",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "qZEvg5CBpDK2bCPGVUTd",
+          "name": "role-partner",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        },
+        {
+          "id": "Vqpcvxmm3P8PGBkSY6BJ",
+          "name": "role-primary",
+          "locationId": "cVCso4OlgGoOoXMpbxxA"
+        }
+      ],
+      "traceId": "f2e924e4-e891-42db-abf0-666831fc306e"
+    },
+    "custom_objects": {
+      "error": 404,
+      "message": "{\"message\":\"Cannot GET /locations/cVCso4OlgGoOoXMpbxxA/customObjects\",\"error\":\"Not Found\",\"statusCode\":404}",
+      "url": "https://services.leadconnectorhq.com/locations/cVCso4OlgGoOoXMpbxxA/customObjects"
+    },
+    "custom_values": {
+      "customValues": [
+        {
+          "id": "W1PIwsKG6ei5r6GhDxTm",
+          "name": "Meeting location",
+          "fieldKey": "{{ custom_values.meeting_location }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field"
+        },
+        {
+          "id": "vvaTgPGV8GKr55qeZd0H",
+          "name": "calendar_link",
+          "fieldKey": "{{ custom_values.calendar_link }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        },
+        {
+          "id": "3rf7KPRgEEMsbbkNaMu9",
+          "name": "service_2_fee",
+          "fieldKey": "{{ custom_values.service_2_fee }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        },
+        {
+          "id": "wlGZP6ZjVUVBJ6BINPn8",
+          "name": "builder_email",
+          "fieldKey": "{{ custom_values.builder_email }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        },
+        {
+          "id": "oLX1uWnN5sYxIqCqFTE2",
+          "name": "refund_policy",
+          "fieldKey": "{{ custom_values.refund_policy }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        },
+        {
+          "id": "C4fROtgclp1luF56hvej",
+          "name": "service_1_name",
+          "fieldKey": "{{ custom_values.service_1_name }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        },
+        {
+          "id": "8YFzb8p0PgzdVh1AR1tq",
+          "name": "service_2_name",
+          "fieldKey": "{{ custom_values.service_2_name }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        },
+        {
+          "id": "pfd60g17qledTetUmbn4",
+          "name": "builder_logo_url",
+          "fieldKey": "{{ custom_values.builder_logo_url }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        },
+        {
+          "id": "jhu1RHj3eMpAEzJjBeaD",
+          "name": "builder_phone",
+          "fieldKey": "{{ custom_values.builder_phone }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        },
+        {
+          "id": "d3pLVQwE0CIOWYVAwnlh",
+          "name": "service_1_fee",
+          "fieldKey": "{{ custom_values.service_1_fee }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        },
+        {
+          "id": "pS7Pziv6TlCv6CR2wNeJ",
+          "name": "builder_name",
+          "fieldKey": "{{ custom_values.builder_name }}",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "documentType": "field",
+          "parentId": "D9N3rxMFBkF7LyzBVoVn"
+        }
+      ],
+      "traceId": "83814b37-5918-4dc5-a659-af2049c9a71a"
+    },
+    "location": {
+      "location": {
+        "id": "cVCso4OlgGoOoXMpbxxA",
+        "brandId": "iyIyu3eT50TualcpGTBY",
+        "companyId": "wws9evg7Qi0D5XsBNk8X",
+        "name": "MASTER FACTORY \u2014 PREBUILD ENGINE",
+        "address": "3 ocean street",
+        "city": "New Castle",
+        "state": "NSW",
+        "country": "AU",
+        "postalCode": "2290",
+        "website": "centriweb.com",
+        "timezone": "Pacific/Auckland",
+        "firstName": "Jerald",
+        "lastName": "Immanuel",
+        "email": "jerald@centriweb.com",
+        "phone": "+61 466 046 109",
+        "logoUrl": "",
+        "business": {
+          "name": "MASTER FACTORY \u2014 PREBUILD ENGINE",
+          "address": "3 ocean street",
+          "city": "New Castle",
+          "state": "NSW",
+          "country": "AU",
+          "postalCode": "2290",
+          "website": "centriweb.com",
+          "timezone": "Pacific/Auckland",
+          "email": ""
+        },
+        "social": {
+          "facebookUrl": "",
+          "googlePlus": "",
+          "linkedIn": "",
+          "foursquare": "",
+          "twitter": "",
+          "yelp": "",
+          "instagram": "",
+          "youtube": "",
+          "pinterest": "",
+          "blogRss": "",
+          "googlePlacesId": ""
+        },
+        "settings": {
+          "allowDuplicateContact": false,
+          "allowDuplicateOpportunity": false,
+          "allowFacebookNameMerge": false,
+          "disableContactTimezone": false,
+          "contactUniqueIdentifiers": [
+            "email",
+            "phone"
+          ],
+          "crmSettings": {
+            "deSyncOwners": true,
+            "syncFollowers": {
+              "contact": true,
+              "opportunity": true
+            }
+          },
+          "saasSettings": {
+            "saasMode": "not_activated",
+            "twilioRebilling": {
+              "markup": 10,
+              "enabled": false
+            }
+          }
+        },
+        "dateAdded": "2026-02-25T14:30:13.758Z",
+        "domain": "",
+        "currency": "",
+        "isAgencySubAccount": false,
+        "defaultEmailService": "",
+        "permissions": {},
+        "snapshotId": ""
+      },
+      "traceId": "8991f449-9f71-4eaf-b8db-8fe409a57afc"
+    },
+    "campaigns": {
+      "campaigns": [],
+      "traceId": "59f5f723-592a-454b-988d-beaaf914d58b"
+    },
+    "payments": {
+      "error": 403,
+      "message": "{\"message\":\"Forbidden resource\",\"error\":\"Forbidden\",\"statusCode\":403}",
+      "url": "https://services.leadconnectorhq.com/payments/orders?locationId=cVCso4OlgGoOoXMpbxxA&limit=50"
+    },
+    "templates": {
+      "templates": [
+        {
+          "dateAdded": "2026-02-25T14:41:45.195Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "name": "SMS-BOOK-Confirmation",
+          "originId": "rKmL23eyEP8oR2in7sRc",
+          "template": {
+            "attachments": [],
+            "body": "  "
+          },
+          "type": "sms",
+          "id": "NJRMCgbDfy5I7CgJYeOw"
+        },
+        {
+          "dateAdded": "2026-02-25T14:41:45.204Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "name": "SMS-BOOK-Reminder-24hr",
+          "originId": "yLMfHriPsNzpHQQUBGNl",
+          "template": {
+            "attachments": [],
+            "body": "  "
+          },
+          "type": "sms",
+          "id": "HagMETiAlknBPzX5f8O7"
+        },
+        {
+          "dateAdded": "2026-02-25T14:41:45.228Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "name": "SMS-PROP-Agreement-Sent",
+          "originId": "rg4VIFfBZ3GNzp2pu9wg",
+          "template": {
+            "attachments": [],
+            "body": "  "
+          },
+          "type": "sms",
+          "id": "j69tNcYHetz36cQmwVBq"
+        },
+        {
+          "dateAdded": "2026-02-25T14:41:45.199Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "name": "SMS-STL-Survey-Link",
+          "originId": "njG9CDduIZQiJj3181jA",
+          "template": {
+            "attachments": [],
+            "body": "  "
+          },
+          "type": "sms",
+          "id": "bDXUKR51AfVU1iRrNQ1G"
+        },
+        {
+          "dateAdded": "2026-02-25T14:41:45.235Z",
+          "locationId": "cVCso4OlgGoOoXMpbxxA",
+          "name": "SMS-STL-Survey-Reminder",
+          "originId": "tfzjlxmT4nhYRVefXAmL",
+          "template": {
+            "attachments": [],
+            "body": "  "
+          },
+          "type": "sms",
+          "id": "oSg6lXwcNAXEJeVkSYQV"
+        }
+      ],
+      "totalCount": 5,
+      "traceId": "605aa84b-f8c6-4623-a7b3-aa8e09a96040"
+    }
+  },
+  "analysis": {
+    "contacts": {
+      "total_sampled": 0,
+      "with_qualification_score": 0,
+      "with_budget_range": 0,
+      "with_lead_temperature": 0,
+      "with_service_phase": 0,
+      "with_email": 0,
+      "with_phone": 0,
+      "tag_distribution": {}
+    }
+  }
+}
