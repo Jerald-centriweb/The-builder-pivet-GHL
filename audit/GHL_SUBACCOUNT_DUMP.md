@@ -167,9 +167,13 @@ Then regenerate this summary or use `audit_data.json` directly.
 
 ---
 
-## Related: Written Content
+## Related Files
 
-**`audit/GHL_WRITTEN_CONTENT_DUMP.md`** — Every piece of written content: SMS/email templates, survey questions, form labels, inline copy. The GHL API doesn't return this; the dump is extracted from the spec.
+| File | Content |
+|------|---------|
+| `audit/GHL_WRITTEN_CONTENT_DUMP.md` | Every word: templates, survey questions, labels |
+| `audit/GHL_BRANDING_AND_UI_SPEC.md` | Colors, fonts, logos — schema + manual capture checklist |
+| `audit/GHL_SUBACCOUNT_COMPLETE_EXPORT.md` | Master index for cross-platform full export |
 
 ---
 

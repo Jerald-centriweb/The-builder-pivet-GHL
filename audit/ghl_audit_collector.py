@@ -113,12 +113,12 @@ def collect_all(api_key, location_id):
     audit = {"collected_at": datetime.utcnow().isoformat(), "location_id": location_id, "sections": {}}
 
     # 1. Custom Fields
-    print("[1/15] Fetching custom fields...")
+    print("[1/17] Fetching custom fields...")
     audit["sections"]["custom_fields"] = api_get(f"/locations/{location_id}/customFields", api_key)
     time.sleep(0.3)
 
     # 2. Contacts (via search - GET /contacts/ often returns empty, POST /contacts/search works)
-    print("[2/15] Fetching contacts (sample)...")
+    print("[2/17] Fetching contacts (sample)...")
     contacts_resp = api_post("/contacts/search", api_key, {
         "locationId": location_id,
         "pageLimit": 100,
@@ -131,12 +131,12 @@ def collect_all(api_key, location_id):
     time.sleep(0.3)
 
     # 3. Pipelines
-    print("[3/15] Fetching pipelines...")
+    print("[3/17] Fetching pipelines...")
     audit["sections"]["pipelines"] = api_get("/opportunities/pipelines", api_key, {"locationId": location_id})
     time.sleep(0.3)
 
     # 4. Opportunities (sample)
-    print("[4/15] Fetching opportunities...")
+    print("[4/17] Fetching opportunities...")
     pipelines = audit["sections"].get("pipelines", {})
     if isinstance(pipelines, dict) and "pipelines" in pipelines:
         for p in pipelines["pipelines"][:3]:
@@ -149,57 +149,65 @@ def collect_all(api_key, location_id):
     time.sleep(0.3)
 
     # 5. Workflows
-    print("[5/15] Fetching workflows...")
+    print("[5/17] Fetching workflows...")
     audit["sections"]["workflows"] = api_get("/workflows/", api_key, {"locationId": location_id})
     time.sleep(0.3)
 
     # 6. Forms
-    print("[6/15] Fetching forms...")
+    print("[6/17] Fetching forms...")
     audit["sections"]["forms"] = api_get("/forms/", api_key, {"locationId": location_id})
     time.sleep(0.3)
 
     # 7. Surveys
-    print("[7/15] Fetching surveys...")
+    print("[7/17] Fetching surveys...")
     audit["sections"]["surveys"] = api_get("/surveys/", api_key, {"locationId": location_id})
     time.sleep(0.3)
 
     # 8. Calendars
-    print("[8/15] Fetching calendars...")
+    print("[8/17] Fetching calendars...")
     audit["sections"]["calendars"] = api_get("/calendars/", api_key, {"locationId": location_id})
     time.sleep(0.3)
 
     # 9. Tags
-    print("[9/15] Fetching tags...")
+    print("[9/17] Fetching tags...")
     audit["sections"]["tags"] = api_get(f"/locations/{location_id}/tags", api_key)
     time.sleep(0.3)
 
     # 10. Custom Objects
-    print("[10/15] Fetching custom objects...")
+    print("[10/17] Fetching custom objects...")
     audit["sections"]["custom_objects"] = api_get(f"/locations/{location_id}/customObjects", api_key)
     time.sleep(0.3)
 
     # 11. Custom Values
-    print("[11/15] Fetching custom values...")
+    print("[11/17] Fetching custom values...")
     audit["sections"]["custom_values"] = api_get(f"/locations/{location_id}/customValues", api_key)
     time.sleep(0.3)
 
     # 12. Location info
-    print("[12/15] Fetching location info...")
+    print("[12/17] Fetching location info...")
     audit["sections"]["location"] = api_get(f"/locations/{location_id}", api_key)
     time.sleep(0.3)
 
     # 13. Campaigns / Email Templates (if available)
-    print("[13/15] Fetching campaigns...")
+    print("[13/17] Fetching campaigns...")
     audit["sections"]["campaigns"] = api_get("/campaigns/", api_key, {"locationId": location_id})
     time.sleep(0.3)
 
     # 14. Payments / Transactions
-    print("[14/15] Fetching payments...")
+    print("[14/17] Fetching payments...")
     audit["sections"]["payments"] = api_get("/payments/orders", api_key, {"locationId": location_id, "limit": "50"})
 
     # 15. Email & SMS Templates
-    print("[15/15] Fetching templates...")
+    print("[15/17] Fetching templates...")
     audit["sections"]["templates"] = api_get(f"/locations/{location_id}/templates", api_key)
+
+    # 16. Brand Boards (colors, fonts)
+    print("[16/17] Fetching brand boards...")
+    audit["sections"]["brand_boards"] = api_get(f"/brand-boards/{location_id}", api_key)
+
+    # 17. Funnels (may contain styling)
+    print("[17/17] Fetching funnels...")
+    audit["sections"]["funnels"] = api_get("/funnels/funnel/list", api_key, {"locationId": location_id})
 
     return audit
 

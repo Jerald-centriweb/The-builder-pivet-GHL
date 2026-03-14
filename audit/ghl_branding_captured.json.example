@@ -1,0 +1,23 @@
+{
+  "_comment": "Copy to ghl_branding_captured.json and fill after manual capture. See GHL_BRANDING_AND_UI_SPEC.md for checklist.",
+  "colors": {
+    "primary": "#039BE5",
+    "secondary": "#1a237e",
+    "accent": "#FF6F00",
+    "text": "#212121",
+    "text_light": "#757575",
+    "background": "#FFFFFF",
+    "button_bg": "#039BE5",
+    "button_text": "#FFFFFF",
+    "link": "#039BE5"
+  },
+  "fonts": {
+    "heading": { "family": "Poppins", "weight": "600", "size": "24px" },
+    "body": { "family": "Open Sans", "weight": "400", "size": "16px" },
+    "button": { "family": "inherit", "weight": "600", "size": "16px" }
+  },
+  "assets": {
+    "logo_url": "",
+    "logo_favicon_url": ""
+  }
+}

@@ -1,6 +1,8 @@
 # Output files — audit/audit_data.json kept in repo for Claude
 audit/audit_data_*.json
 /audit_data.json
+# Builder-specific branding (optional — commit if you want it in repo)
+audit/ghl_branding_captured.json
 
 # Environment and secrets — NEVER commit these
 .env

@@ -67,6 +67,8 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 | `audit/audit_data.json` | Live GHL account data (full JSON dump from collector). |
 | `audit/GHL_SUBACCOUNT_DUMP.md` | Human-readable summary of live sub-account for Claude context. |
 | `audit/GHL_WRITTEN_CONTENT_DUMP.md` | Every word: SMS/email templates, survey questions, form labels, inline copy. |
+| `audit/GHL_BRANDING_AND_UI_SPEC.md` | Schema for colors, fonts, logos + manual capture checklist. |
+| `audit/GHL_SUBACCOUNT_COMPLETE_EXPORT.md` | Master index — cross-platform reference for full subaccount understanding. |
 | `audit/PREBUILD_AUTOPILOT_AUDIT_REPORT.md` | Full architecture audit (spec-based, not live account). |
 | `audit/PRIORITY_ACTION_MATRIX.md` | Execution order for all known tasks. |
 | `audit/SELLABILITY_STRATEGY.md` | Productisation and demo strategy. |
