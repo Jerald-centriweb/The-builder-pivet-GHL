@@ -1,7 +1,6 @@
-# Output files — audit/audit_data.json kept in repo for Claude; timestamped backups ignored
+# Output files — audit/audit_data.json kept in repo for Claude
 audit/audit_data_*.json
-audit_data.json
-!audit/audit_data.json
+/audit_data.json
 
 # Environment and secrets — NEVER commit these
 .env

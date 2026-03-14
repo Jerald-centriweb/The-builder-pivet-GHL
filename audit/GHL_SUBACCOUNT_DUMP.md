@@ -167,6 +167,12 @@ Then regenerate this summary or use `audit_data.json` directly.
 
 ---
 
+## Related: Written Content
+
+**`audit/GHL_WRITTEN_CONTENT_DUMP.md`** — Every piece of written content: SMS/email templates, survey questions, form labels, inline copy. The GHL API doesn't return this; the dump is extracted from the spec.
+
+---
+
 ## GoHighLevel MCP
 
 For live API access from Claude/Cursor, use the [GoHighLevel-MCP](https://github.com/mastanley13/GoHighLevel-MCP) server. It provides 269+ tools for contacts, workflows, opportunities, templates, etc. Configure in `~/.cursor/mcp.json` with your API key and Location ID.

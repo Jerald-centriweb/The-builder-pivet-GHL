@@ -40,18 +40,16 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 | M4 — Snapshot v1.1 Export | Unknown | |
 | M5 — Pilot Install | Unknown | |
 
-**Last verified:** March 2026 (spec review only — live account not yet inspected)
+**Last verified:** March 2026 (live audit data collected; GHL MCP + Location ID configured)
 
 ---
 
 ## Open Items Right Now (Ranked)
 
 1. **WF-03 scoring is unverified** — the scoring engine exists (`audit/wf03_scoring_engine.py`) but whether WF-03 in GHL actually calls it is unknown. This is the #1 risk. If scoring isn't working, nothing routes correctly.
-2. **GHL MCP not yet set up** — needed to inspect the live account from terminal. See `mcp/SETUP_GUIDE.md`.
-3. **Location ID not yet provided** — required for both the collector script and the MCP.
-4. **Dynamic Custom Values architecture flaw** — `current_service_fee` etc. are location-level in GHL. Will break when multiple clients are in different phases simultaneously. Fix: convert to contact-level custom fields.
-5. **n8n outreach bugs** — 5 known bugs in the cold outreach system (Section 19 of context doc). Not yet fixed.
-6. **ET-BOOK-Confirmation** — template copy was missing from spec, now added to context doc but not yet built in GHL.
+2. **Dynamic Custom Values architecture flaw** — `current_service_fee` etc. are location-level in GHL. Will break when multiple clients are in different phases simultaneously. Fix: convert to contact-level custom fields.
+3. **n8n outreach bugs** — 5 known bugs in the cold outreach system (Section 19 of context doc). Not yet fixed.
+4. **ET-BOOK-Confirmation** — template copy was missing from spec, now added to context doc but not yet built in GHL.
 
 ---
 
@@ -68,6 +66,7 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 | `audit/ghl_audit_collector.py` | Pulls live data from GHL. Run on VPS with `--api-key` + `--location-id`. |
 | `audit/audit_data.json` | Live GHL account data (full JSON dump from collector). |
 | `audit/GHL_SUBACCOUNT_DUMP.md` | Human-readable summary of live sub-account for Claude context. |
+| `audit/GHL_WRITTEN_CONTENT_DUMP.md` | Every word: SMS/email templates, survey questions, form labels, inline copy. |
 | `audit/PREBUILD_AUTOPILOT_AUDIT_REPORT.md` | Full architecture audit (spec-based, not live account). |
 | `audit/PRIORITY_ACTION_MATRIX.md` | Execution order for all known tasks. |
 | `audit/SELLABILITY_STRATEGY.md` | Productisation and demo strategy. |
