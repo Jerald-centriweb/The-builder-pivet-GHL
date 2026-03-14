@@ -16,13 +16,17 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 
 ## Who Is Working On This
 
-| Role | Claude Instance | Knows About |
-|------|----------------|-------------|
-| Repo/code work | Claude Code (this instance, any terminal) | Everything in this repo |
-| GHL live account | Claude Code + GHL MCP (once set up) | Live account state |
-| Strategy/context | Other Claude account (web or API) | Additional business context not yet in this repo |
+| Role | Claude Instance | Location | Knows About |
+|------|----------------|----------|-------------|
+| Repo/code work | Claude Code (GitHub env) | Cloud (this session) | Everything in this repo |
+| Live GHL work | Claude Code + GHL MCP | VPS: root@76.13.212.238 | Live account + this repo |
+| Strategy/context | Other Claude account | Web/API | Additional business context |
 
-**If you have context from another Claude session or account that's not in this repo — paste it into `KNOWLEDGE_TRANSFER.md` in this directory so all instances can read it.**
+**VPS:** Hostinger KVM, Ubuntu 24.04, `srv1420954.hstgr.cloud` — `76.13.212.238`
+**Project dir on VPS:** `/root/prebuild-autopilot`
+**Claude Code on VPS:** Installed via `npm install -g @anthropic-ai/claude-code`
+
+**If you have context from another Claude session or account that's not in this repo — paste it into `KNOWLEDGE_TRANSFER.md` so all instances can read it.**
 
 ---
 
@@ -55,18 +59,25 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 
 | File | What It Is |
 |------|-----------|
-| `PREBUILD_AUTOPILOT_CONTEXT.md` | **THE SPEC** — read this in full before any GHL work. Single source of truth for all architecture, naming, workflows, templates, custom fields. |
-| `audit/DEEP_SPEC_ANALYSIS.md` | Bugs found, architecture risks, improvement priorities. Start here to understand what needs fixing. |
-| `audit/GHL_VERIFICATION_CHECKLIST.md` | Section-by-section checklist to verify live GHL account state against spec. |
-| `audit/wf03_scoring_engine.py` | The external scoring engine for WF-03. Deploy to n8n/Cloud Function/Lambda. Fixed bugs: MAX_RAW_SCORE, tag removal, referral scoring. |
-| `audit/ghl_audit_collector.py` | Script to pull live data from GHL. Run locally with `--api-key` + `--location-id`. |
-| `audit/PREBUILD_AUTOPILOT_AUDIT_REPORT.md` | Full architecture audit report (spec-based, not live account). |
+| `CLAUDE.md` | **THIS FILE** — shared memory for all Claude instances. Update it when status changes. |
+| `KNOWLEDGE_TRANSFER.md` | Paste context from other Claude sessions here so all instances share it. |
+| `PREBUILD_AUTOPILOT_CONTEXT.md` | **THE SPEC** — read before any GHL work. Architecture, workflows, templates, naming, custom fields. |
+| `audit/DEEP_SPEC_ANALYSIS.md` | Bugs found in spec + code, architecture risks, what to fix and in what order. |
+| `audit/GHL_VERIFICATION_CHECKLIST.md` | Section-by-section checklist to verify live GHL account against the spec. |
+| `audit/wf03_scoring_engine.py` | External scoring engine for WF-03. Bugs fixed. Deploy to n8n/Cloud Function/Lambda. |
+| `audit/ghl_audit_collector.py` | Pulls live data from GHL. Run on VPS with `--api-key` + `--location-id`. |
+| `audit/audit_data.json` | Live GHL account data (generated on VPS after setup — gitignored). |
+| `audit/PREBUILD_AUTOPILOT_AUDIT_REPORT.md` | Full architecture audit (spec-based, not live account). |
 | `audit/PRIORITY_ACTION_MATRIX.md` | Execution order for all known tasks. |
 | `audit/SELLABILITY_STRATEGY.md` | Productisation and demo strategy. |
-| `audit/SRV_QUALIFICATION_FULL_SPEC.md` | Full survey spec with all 15 questions. |
-| `mcp/SETUP_GUIDE.md` | How to install GHL MCP for live account access from terminal. |
-| `mcp/setup.sh` | One-command MCP install script. |
+| `audit/SRV_QUALIFICATION_FULL_SPEC.md` | Full survey spec with all 15 questions and field mappings. |
+| `mcp/SETUP_GUIDE.md` | How to install GHL MCP for live account access. |
+| `mcp/setup.sh` | MCP-only install script (VPS full setup uses `vps/setup_vps.sh` instead). |
 | `mcp/claude_mcp_config.json` | Claude Code settings entry for GHL MCP. |
+| `vps/setup_vps.sh` | **Full VPS setup** — installs everything in one command. |
+| `CURSOR_VPS_PROMPT.md` | Ready-to-paste Cursor prompt to run VPS setup. Fill in 3 values then give to Cursor. |
+| `CURSOR_STARTER_PROMPT.md` | First-message prompt for any new Cursor session on this project. |
+| `.cursorrules` | Auto-read by Cursor — project rules, safety rules, naming conventions. |
 
 ---
 
@@ -84,22 +95,29 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 
 ## GHL Account Access
 
-**API Key:** `pit-335bf0ee-b8e4-4eaa-be07-997052ceb717`
-**Location ID:** *(not yet provided — get from GHL → Settings → Company → Locations)*
+**GHL API Key:** `pit-335bf0ee-b8e4-4eaa-be07-997052ceb717`
+**GHL Location ID:** *(owner to provide — GHL → Settings → Company → Locations)*
+**Anthropic API Key:** *(owner's key from console.anthropic.com — stored in VPS /etc/environment, never in repo)*
 
-### To access live account from terminal:
+### From the VPS (works — no proxy blocking):
 ```bash
-# Option 1 — run data collector locally:
-python3 audit/ghl_audit_collector.py \
+# Run data collector:
+python3 /root/prebuild-autopilot/audit/ghl_audit_collector.py \
   --api-key "pit-335bf0ee-b8e4-4eaa-be07-997052ceb717" \
   --location-id "YOUR_LOCATION_ID"
 
-# Option 2 — install MCP for full tool access:
-./mcp/setup.sh
-# then add location ID to ~/.claude/settings.json and ~/.claude/mcp/ghl-mcp/.env
+# Launch Claude Code with GHL MCP:
+cd /root/prebuild-autopilot && claude
 ```
 
-> Note: The Claude Code cloud environment (GitHub/web sessions) blocks outbound HTTPS to GHL. Run these on your local machine or VPS where there's direct internet access.
+### First-time VPS setup:
+```bash
+# Cursor runs this — see CURSOR_VPS_PROMPT.md for the full prompt
+curl -fsSL https://raw.githubusercontent.com/Jerald-centriweb/The-builder-pivet-GHL/claude/review-autopilot-architecture-ZT2lu/vps/setup_vps.sh \
+  | GHL_LOCATION_ID="xxx" ANTHROPIC_API_KEY="sk-ant-xxx" bash
+```
+
+> Note: The GitHub/cloud Claude Code environment blocks outbound HTTPS to GHL. All live GHL work must run from the VPS.
 
 ---
 
