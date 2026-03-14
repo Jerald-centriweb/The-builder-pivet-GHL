@@ -30,28 +30,39 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 
 ---
 
-## Current Build Status (Update This When Things Change)
+## Current Build Status (Updated March 2026 — Live Account Inspected)
 
 | Milestone | Status | Notes |
 |-----------|--------|-------|
-| M1 — Factory Baseline | Likely complete | Pipeline + Custom Values + naming conventions locked |
-| M2 — Core Workflows Live | Unknown | WF-03 scoring unverified — see open items |
-| M3 — Demo Ready | Unknown | Seeded demo contacts not confirmed |
-| M4 — Snapshot v1.1 Export | Unknown | |
-| M5 — Pilot Install | Unknown | |
+| M1 — Factory Baseline | ⚠️ Partial | Pipeline exists but 4 stage names wrong. Fields exist but 2 misnamed, 7 missing. All custom values blank. |
+| M2 — Core Workflows Live | ❌ Blocked | All 10 workflows DRAFT. WF-08 missing. Scoring engine not deployed. |
+| M3 — Demo Ready | ❌ Not started | No seeded contacts. Custom values blank. Email templates missing. |
+| M4 — Snapshot v1.1 Export | ❌ Blocked | Can't export until M2 complete |
+| M5 — Pilot Install | ❌ Blocked | |
 
-**Last verified:** March 2026 (spec review only — live account not yet inspected)
+**Last verified:** March 2026 — live account data pulled via GHL API (see `audit/audit_data.json`)
 
 ---
 
-## Open Items Right Now (Ranked)
+## Open Items Right Now (Ranked by Impact)
 
-1. **WF-03 scoring is unverified** — the scoring engine exists (`audit/wf03_scoring_engine.py`) but whether WF-03 in GHL actually calls it is unknown. This is the #1 risk. If scoring isn't working, nothing routes correctly.
-2. **GHL MCP not yet set up** — needed to inspect the live account from terminal. See `mcp/SETUP_GUIDE.md`.
-3. **Location ID not yet provided** — required for both the collector script and the MCP.
-4. **Dynamic Custom Values architecture flaw** — `current_service_fee` etc. are location-level in GHL. Will break when multiple clients are in different phases simultaneously. Fix: convert to contact-level custom fields.
-5. **n8n outreach bugs** — 5 known bugs in the cold outreach system (Section 19 of context doc). Not yet fixed.
-6. **ET-BOOK-Confirmation** — template copy was missing from spec, now added to context doc but not yet built in GHL.
+### Blockers — fix before anything else works
+1. **Rename 4 pipeline stages** — "Qualified - Hot"→"Qualified", "Nurture - Warm"→"Nurture", "Intro Call Booked"→"Discovery Booked", delete "Survey Completed" stage
+2. **Rename 2 custom fields** — `cf_lead_score`→`cf_qualification_score`, `cf_finance_status`→`cf_financing_status`
+3. **Create 7 missing custom fields** — cf_lead_temperature, cf_design_status, cf_decision_maker, cf_communication_preference, cf_lost_reason, cf_site_address, cf_prior_quotes
+4. **Populate all 14 custom values** — all currently blank, nothing in templates will render
+5. **Create 11 missing tags** — survey-pending, survey-completed, call-booked, payment-received, etc.
+6. **Build 14 email templates** — none exist in GHL (copy in context doc Section 8)
+7. **Build 4 missing SMS templates** — SMS-SRV-Final, SMS-QUAL-Hot-BookCall, SMS-PAY-Confirmation, SMS-WIN-ReviewRequest
+8. **Create WF-08-Portal-Welcome** — not in account at all
+9. **Deploy scoring engine** — code in `audit/wf03_scoring_engine.py`, needs n8n deployment + WF-03 webhook
+10. **Publish all workflows** — only after 1–9 done. ALL 10 are Draft.
+
+### Architecture risks (fix before first client)
+11. **Dynamic Custom Values flaw** — current_service_fee etc. are location-level, break with concurrent clients
+12. **n8n outreach bugs** — 5 documented bugs in Section 19 of context doc
+
+Full gap analysis: `advisory/CURRENT_STATE_GAP_ANALYSIS.md`
 
 ---
 
@@ -97,7 +108,8 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 ## GHL Account Access
 
 **GHL API Key:** `pit-335bf0ee-b8e4-4eaa-be07-997052ceb717`
-**GHL Location ID:** *(owner to provide — GHL → Settings → Company → Locations)*
+**GHL Location ID:** `cVCso4OlgGoOoXMpbxxA`
+**Account name:** MASTER FACTORY — PREBUILD ENGINE (Newcastle NSW — Factory account, not a client)
 **Anthropic API Key:** *(owner's key from console.anthropic.com — stored in VPS /etc/environment, never in repo)*
 
 ### From the VPS (works — no proxy blocking):
