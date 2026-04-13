@@ -1,72 +1,88 @@
 # Claude — Build analysis packet (new chat)
 
-Use this file as the **primary** context. Add **exactly one** companion file (see below) so the model can compare **intent vs reality**.
+## Data provenance (read this first)
+
+| File | Is it live sub-account data? |
+|------|------------------------------|
+| **`audit/audit_data.json`** | **Yes.** Produced only by calling the GHL API (`audit/ghl_audit_collector.py`). This is the ground truth for what exists in the location (plus each endpoint’s errors, e.g. 403/404). |
+| **`audit/GHL_THOROUGH_ACCOUNT_EXPORT.md`** | **Yes — but only a rendering of whatever is inside `audit_data.json` at generation time.** Same facts, human-readable. Regenerate after every collector run. |
+| **`PREBUILD_AUTOPILOT_CONTEXT.md`** | **No.** It is the **design spec** (intent, copy, rules). It is not exported from GHL. |
+| **This file (`CLAUDE_BUILD_ANALYSIS_PACKET.md`)** | **Mixed.** It routes you to the right artefacts and lists **priorities inferred** from last known live export + repo notes — not a substitute for `audit_data.json`. |
+
+**If you only want execution reality from the real sub-account (nothing about “the idea”):** attach **`audit/audit_data.json`** *or* **`audit/GHL_THOROUGH_ACCOUNT_EXPORT.md`** — and **do not** attach `PREBUILD_AUTOPILOT_CONTEXT.md`. Re-run the collector first so the JSON is current:
+
+```bash
+python3 audit/ghl_audit_collector.py \
+  --api-key "YOUR_PIT_KEY" \
+  --location-id "YOUR_LOCATION_ID" \
+  --output audit/audit_data.json \
+  --deep \
+  --markdown audit/GHL_THOROUGH_ACCOUNT_EXPORT.md
+```
+
+**Hard limit:** Anything GHL’s API does not return (e.g. some template bodies, some payment scopes, sometimes thin workflow internals) **cannot** appear in these files until GHL exposes it or you capture it manually in GHL UI. The collector stores those gaps as errors or empty fields — that is still “real” signal.
 
 ---
 
 ## Companion file (pick one — second attachment)
 
-| You want Claude to focus on… | Attach this second file |
-|------------------------------|-------------------------|
-| **Full product spec** — every workflow, template, field, rule, naming lock | `PREBUILD_AUTOPILOT_CONTEXT.md` *(repo root; long but complete)* |
-| **Live Factory vs that spec** — gaps, stage-name mismatches, inventory | `audit/SUBACCOUNT_BUILD_STATUS_FULL_AUDIT.md` |
-| **Raw live inventory** (forms, calendars, tags, deep workflow JSON if you ran `--deep`) | `audit/GHL_THOROUGH_ACCOUNT_EXPORT.md` — *regenerate first:* `python3 audit/ghl_audit_collector.py --api-key … --location-id … --output audit/audit_data.json --deep --markdown audit/GHL_THOROUGH_ACCOUNT_EXPORT.md` |
+| Goal | Second file |
+|------|-------------|
+| **Execution only — what exists in GHL** | `audit/audit_data.json` **or** `audit/GHL_THOROUGH_ACCOUNT_EXPORT.md` (after command above) |
+| **Compare live vs intended design** | `PREBUILD_AUTOPILOT_CONTEXT.md` **and** live JSON or thorough MD |
+| **Narrated gap list** (live JSON vs spec, still partly interpretive) | `audit/SUBACCOUNT_BUILD_STATUS_FULL_AUDIT.md` |
 
-**Recommended default pair for “everything about the build”:** **this packet + `PREBUILD_AUTOPILOT_CONTEXT.md`.**
-
----
-
-## What you’re building (one paragraph)
-
-**PreBuild Autopilot** — a GoHighLevel Factory snapshot for Australian residential builders: enquiry → qualification survey → scoring/routing → education → intro call → proposal / e-sign / payment → portal. One sub-account per builder; customise via Custom Values; no per-client forks. Critical rules: no hardcoded fees (`{{custom_values.service_1_fee}}`), no WF-07, SMS ends with “Reply STOP to opt out”, `{{custom_values.google_review_link}}` for reviews.
+**Default if you want “idea + execution”:** live export **+** `PREBUILD_AUTOPILOT_CONTEXT.md`.  
+**Default if you want “only what’s in the account”:** **`audit_data.json`** (or thorough MD) **only** — no spec.
 
 ---
 
-## Remaining work (ranked — do these in order)
+## What you’re building (context only — not from GHL)
 
-1. **Prove WF-03** — External scorer (`audit/wf03_scoring_engine.py`) deployed and wired; contact fields updated; routing matches **live** pipeline stage **names** (e.g. `Qualified - Hot` vs spec “Qualified”).
-2. **Reconcile field keys** — e.g. `cf_lead_score` vs `cf_qualification_score`; `cf_finance_status` vs `cf_financing_status`; survey option strings vs scorer (`wf03_scoring_engine.py`).
-3. **Find or build WF-08** (Portal Welcome) — Not on workflow list in last API export; confirm in UI.
-4. **Clarify WF-11** — Live `WF-11-Partner-Notifications` vs spec “Builder Internal Tasks”.
-5. **Custom values** — Ensure `fee_structure`, `survey_link`, `google_review_link`, portal/calendar links exist and are populated (API list alone may hide values).
-6. **Tags** — Spec expects many tags (`survey-pending`, `call-booked`, etc.); only a subset appeared in last export — confirm created by workflows or pre-created.
-7. **Publish + test** — Workflows were **draft** in last export; calendar **inactive**; run end-to-end test contacts after publish.
-8. **Templates** — API often returns empty bodies; verify in GHL; add **ET-BOOK-Confirmation** per open items.
-9. **Architecture** — Move fee/phase-sensitive logic off location-level Custom Values where concurrent clients would clash (`CLAUDE.md` open item).
-10. **n8n cold outreach** — Separate system; known bugs in spec §19.
+*Skip this section if you attached only live JSON / thorough MD.*
+
+PreBuild Autopilot is a GHL Factory snapshot for builder preconstruction funnels (enquiry → survey → scoring → nurture → call → proposal/pay → portal). Naming and rules live in `PREBUILD_AUTOPILOT_CONTEXT.md` if you need them.
 
 ---
 
-## “What can we do better?” (themes for Claude to stress-test)
+## Remaining work (inferred — cross-check against `audit_data.json`)
 
-- **Demo readiness:** Seeded contacts + recorded happy-path vs cold/warm/hot/disqualified.
-- **Single source of truth:** Spec vs live naming (pipeline stages, templates, WF names).
-- **Observability:** Builder-facing weekly summary / dashboard (even lightweight).
-- **Compliance:** Every SMS opt-out; real review URL; Australian context copy.
-- **Sellability:** ROI story, onboarding checklist, snapshot export process (M4/M5).
-- **Code vs GHL:** `audit/DEEP_SPEC_ANALYSIS.md` for scoring-engine and spec contradictions.
+These items are **not** re-fetched from GHL inside this packet; they were prioritised from the last exported audit + repo risk notes. After a fresh collector run, Claude should **verify each line against the new JSON**.
 
----
-
-## Suggested prompts (paste after attachments)
-
-1. “Given the spec and this packet, list **spec vs live** mismatches and whether to change GHL or the spec.”
-2. “Produce a **2-week execution plan** with owners, verification steps, and ‘done’ definitions.”
-3. “Identify **single points of failure** in the funnel and mitigations.”
-4. “What would you **cut or defer** for a credible v1 pilot?”
+1. WF-03 wiring + external scorer vs live workflow payload (`--deep`).
+2. Field keys / survey strings vs what appears on contacts and in deep form/survey payloads.
+3. WF-08 presence (workflow list in JSON).
+4. WF-11 naming vs list in JSON.
+5. Custom values: keys in JSON; **values** may still need UI if API omits them.
+6. Tags list in JSON vs what workflows expect.
+7. `status` / `isActive` on workflows and calendars — as **facts** in JSON, not as “pass/fail”.
+8. Template bodies if API returns empty.
+9. Architecture / n8n / codebase — **outside** sub-account JSON; only if scope includes repo.
 
 ---
 
-## Other repo files (only if Claude needs depth)
+## “What can we do better?” (optional — not sub-account data)
 
-| Path | Use |
-|------|-----|
-| `audit/audit_data.json` | Latest API JSON (refresh with collector) |
-| `audit/wf03_scoring_engine.py` | Scoring logic for WF-03 |
-| `audit/DEEP_SPEC_ANALYSIS.md` | Spec/code bugs and risks |
-| `audit/GHL_VERIFICATION_CHECKLIST.md` | Manual UI checklist |
-| `CLAUDE.md` | Milestones + current open items |
+Themes for product/process review; confirm in GHL only where relevant.
 
 ---
 
-*This packet is a router + prioritised backlog. Numbers above align with `CLAUDE.md` and `audit/SUBACCOUNT_BUILD_STATUS_FULL_AUDIT.md`; refresh those sources after you change GHL.*
+## Suggested prompts
+
+**Execution-only:** “Using only the attached `audit_data.json`, inventory every asset, flag every `error` field, list every `status`/`isActive`/`draft` value, and note anything missing vs an empty Factory.”
+
+**Live + spec:** “Compare attached live JSON to `PREBUILD_AUTOPILOT_CONTEXT.md` §4–§8; list mismatches.”
+
+---
+
+## Other paths (optional depth)
+
+| Path | Nature |
+|------|--------|
+| `audit/wf03_scoring_engine.py` | Repo code, not GHL |
+| `audit/DEEP_SPEC_ANALYSIS.md` | Repo analysis, not GHL |
+| `CLAUDE.md` | Team notes, not GHL |
+
+---
+
+*Refresh `audit/audit_data.json` after any material GHL change; regenerate `GHL_THOROUGH_ACCOUNT_EXPORT.md` from that JSON.*
