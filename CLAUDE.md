@@ -69,6 +69,7 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 | `audit/GHL_WRITTEN_CONTENT_DUMP.md` | Every word: SMS/email templates, survey questions, form labels, inline copy. |
 | `audit/GHL_BRANDING_AND_UI_SPEC.md` | Schema for colors, fonts, logos + manual capture checklist. |
 | `audit/GHL_SUBACCOUNT_COMPLETE_EXPORT.md` | Master index — cross-platform reference for full subaccount understanding. |
+| `audit/SUBACCOUNT_BUILD_STATUS_FULL_AUDIT.md` | **Handoff audit** — live `audit_data.json` vs spec: gaps, risks, ordered next steps for Claude Code. |
 | `audit/PREBUILD_AUTOPILOT_AUDIT_REPORT.md` | Full architecture audit (spec-based, not live account). |
 | `audit/PRIORITY_ACTION_MATRIX.md` | Execution order for all known tasks. |
 | `audit/SELLABILITY_STRATEGY.md` | Productisation and demo strategy. |
@@ -158,4 +159,4 @@ This repo is the shared brain. If it's not in the repo, it doesn't exist for oth
 ---
 
 *Maintained by Jerald / CentriWeb. Update this file whenever the project status changes or new decisions are made.*
-*Last updated: March 2026*
+*Last updated: April 2026 — added `audit/SUBACCOUNT_BUILD_STATUS_FULL_AUDIT.md`*
