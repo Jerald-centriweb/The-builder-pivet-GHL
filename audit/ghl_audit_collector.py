@@ -6,12 +6,29 @@ Run this script locally where you have network access to the GHL API.
 
 Usage:
     python3 ghl_audit_collector.py \
-        --api-key "pit-335bf0ee-b8e4-4eaa-be07-997052ceb717" \
-        --location-id "YOUR_LOCATION_ID"
+        --api-key "YOUR_PIT_KEY" \
+        --location-id "YOUR_LOCATION_ID" \
+        --output audit/audit_data.json
+
+Optional — **thorough capture** (every asset the API exposes; active/inactive is
+just metadata, not filtered):
+
+    python3 ghl_audit_collector.py \
+        --api-key "YOUR_PIT_KEY" \
+        --location-id "YOUR_LOCATION_ID" \
+        --output audit/audit_data.json \
+        --deep \
+        --markdown audit/GHL_THOROUGH_ACCOUNT_EXPORT.md
+
+`--deep` calls per-ID endpoints for workflows, forms, surveys, and calendars so
+Claude can see builder payloads when GHL returns them. Unknown or restricted
+endpoints are stored as `{ "error": ... }` — still useful for a full picture.
+
+Then (or alone on an existing JSON):
+
+    python3 audit/ghl_audit_to_markdown.py audit/audit_data.json -o audit/GHL_THOROUGH_ACCOUNT_EXPORT.md
 
 Find your Location ID: GHL → Settings → Company → Locations → copy the ID
-
-Output: audit_data.json (comprehensive dump of all GHL sub-account data)
 """
 
 import argparse
@@ -109,105 +126,222 @@ def paginate(path, api_key, key, params=None):
     return all_items
 
 
-def collect_all(api_key, location_id):
-    audit = {"collected_at": datetime.utcnow().isoformat(), "location_id": location_id, "sections": {}}
+def _list_from_section(data, key_candidates=("workflows", "forms", "surveys", "calendars", "templates")):
+    """Normalize list responses: { "forms": [...] } or raw list."""
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict):
+        for k in key_candidates:
+            v = data.get(k)
+            if isinstance(v, list):
+                return v
+    return []
 
-    # 1. Custom Fields
-    print("[1/17] Fetching custom fields...")
-    audit["sections"]["custom_fields"] = api_get(f"/locations/{location_id}/customFields", api_key)
-    time.sleep(0.3)
 
-    # 2. Contacts (via search - GET /contacts/ often returns empty, POST /contacts/search works)
-    print("[2/17] Fetching contacts (sample)...")
-    contacts_resp = api_post("/contacts/search", api_key, {
-        "locationId": location_id,
-        "pageLimit": 100,
-        "query": ""  # Empty query returns recent contacts
-    })
-    if isinstance(contacts_resp, dict) and "error" in contacts_resp:
-        audit["sections"]["contacts"] = contacts_resp
+def collect_all(api_key, location_id, deep=False):
+    audit = {
+        "collected_at": datetime.utcnow().isoformat(),
+        "location_id": location_id,
+        "collector_version": 2,
+        "deep_mode": deep,
+        "sections": {},
+    }
+    s = audit["sections"]
+    step = [0]
+    total = 25 + (1 if deep else 0)
+
+    def tick(label):
+        step[0] += 1
+        print(f"[{step[0]}/{total}] {label}")
+
+    tick("Fetching custom fields...")
+    s["custom_fields"] = api_get(f"/locations/{location_id}/customFields", api_key)
+    time.sleep(0.25)
+
+    tick("Fetching contacts (sample)...")
+    contacts_resp = api_post(
+        "/contacts/search",
+        api_key,
+        {"locationId": location_id, "pageLimit": 100, "query": ""},
+    )
+    if isinstance(contacts_resp, dict):
+        s["contacts"] = contacts_resp
     else:
-        audit["sections"]["contacts"] = contacts_resp
-    time.sleep(0.3)
+        s["contacts"] = {"error": "invalid_response", "raw": str(contacts_resp)[:500]}
+    time.sleep(0.25)
 
-    # 3. Pipelines
-    print("[3/17] Fetching pipelines...")
-    audit["sections"]["pipelines"] = api_get("/opportunities/pipelines", api_key, {"locationId": location_id})
-    time.sleep(0.3)
+    tick("Fetching pipelines...")
+    s["pipelines"] = api_get("/opportunities/pipelines", api_key, {"locationId": location_id})
+    time.sleep(0.25)
 
-    # 4. Opportunities (sample)
-    print("[4/17] Fetching opportunities...")
-    pipelines = audit["sections"].get("pipelines", {})
+    tick("Fetching opportunities (per pipeline sample)...")
+    pipelines = s.get("pipelines", {})
     if isinstance(pipelines, dict) and "pipelines" in pipelines:
-        for p in pipelines["pipelines"][:3]:
+        for p in pipelines["pipelines"][:5]:
             pid = p.get("id", "")
-            opps = api_get("/opportunities/search", api_key, {
-                "location_id": location_id, "pipeline_id": pid, "limit": "50"
-            })
-            audit["sections"][f"opportunities_{pid}"] = opps
-            time.sleep(0.3)
-    time.sleep(0.3)
+            if not pid:
+                continue
+            s[f"opportunities_{pid}"] = api_get(
+                "/opportunities/search",
+                api_key,
+                {"location_id": location_id, "pipeline_id": pid, "limit": "50"},
+            )
+            time.sleep(0.2)
 
-    # 5. Workflows
-    print("[5/17] Fetching workflows...")
-    audit["sections"]["workflows"] = api_get("/workflows/", api_key, {"locationId": location_id})
-    time.sleep(0.3)
+    tick("Fetching workflows (list)...")
+    s["workflows"] = api_get("/workflows/", api_key, {"locationId": location_id})
+    time.sleep(0.25)
 
-    # 6. Forms
-    print("[6/17] Fetching forms...")
-    audit["sections"]["forms"] = api_get("/forms/", api_key, {"locationId": location_id})
-    time.sleep(0.3)
+    tick("Fetching forms (list)...")
+    s["forms"] = api_get("/forms/", api_key, {"locationId": location_id})
+    time.sleep(0.25)
 
-    # 7. Surveys
-    print("[7/17] Fetching surveys...")
-    audit["sections"]["surveys"] = api_get("/surveys/", api_key, {"locationId": location_id})
-    time.sleep(0.3)
+    tick("Fetching surveys (list)...")
+    s["surveys"] = api_get("/surveys/", api_key, {"locationId": location_id})
+    time.sleep(0.25)
 
-    # 8. Calendars
-    print("[8/17] Fetching calendars...")
-    audit["sections"]["calendars"] = api_get("/calendars/", api_key, {"locationId": location_id})
-    time.sleep(0.3)
+    tick("Fetching calendars (list)...")
+    s["calendars"] = api_get("/calendars/", api_key, {"locationId": location_id})
+    time.sleep(0.25)
 
-    # 9. Tags
-    print("[9/17] Fetching tags...")
-    audit["sections"]["tags"] = api_get(f"/locations/{location_id}/tags", api_key)
-    time.sleep(0.3)
+    tick("Fetching calendar groups...")
+    s["calendar_groups"] = api_get("/calendars/groups", api_key, {"locationId": location_id})
+    time.sleep(0.25)
 
-    # 10. Custom Objects
-    print("[10/17] Fetching custom objects...")
-    audit["sections"]["custom_objects"] = api_get(f"/locations/{location_id}/customObjects", api_key)
-    time.sleep(0.3)
+    tick("Fetching tags...")
+    s["tags"] = api_get(f"/locations/{location_id}/tags", api_key)
+    time.sleep(0.25)
 
-    # 11. Custom Values
-    print("[11/17] Fetching custom values...")
-    audit["sections"]["custom_values"] = api_get(f"/locations/{location_id}/customValues", api_key)
-    time.sleep(0.3)
+    tick("Fetching custom objects (multiple paths)...")
+    s["custom_objects"] = {
+        "get_locations_customObjects": api_get(f"/locations/{location_id}/customObjects", api_key),
+        "get_objects": api_get("/objects/", api_key, {"locationId": location_id}),
+        "get_locations_custom_objects_snake": api_get(f"/locations/{location_id}/custom-objects", api_key),
+    }
+    time.sleep(0.25)
 
-    # 12. Location info
-    print("[12/17] Fetching location info...")
-    audit["sections"]["location"] = api_get(f"/locations/{location_id}", api_key)
-    time.sleep(0.3)
+    tick("Fetching custom values...")
+    s["custom_values"] = api_get(f"/locations/{location_id}/customValues", api_key)
+    time.sleep(0.25)
 
-    # 13. Campaigns / Email Templates (if available)
-    print("[13/17] Fetching campaigns...")
-    audit["sections"]["campaigns"] = api_get("/campaigns/", api_key, {"locationId": location_id})
-    time.sleep(0.3)
+    tick("Fetching location (full record)...")
+    s["location"] = api_get(f"/locations/{location_id}", api_key)
+    time.sleep(0.25)
 
-    # 14. Payments / Transactions
-    print("[14/17] Fetching payments...")
-    audit["sections"]["payments"] = api_get("/payments/orders", api_key, {"locationId": location_id, "limit": "50"})
+    tick("Fetching campaigns...")
+    s["campaigns"] = api_get("/campaigns/", api_key, {"locationId": location_id})
+    time.sleep(0.25)
 
-    # 15. Email & SMS Templates
-    print("[15/17] Fetching templates...")
-    audit["sections"]["templates"] = api_get(f"/locations/{location_id}/templates", api_key)
+    tick("Fetching payments orders...")
+    s["payments"] = api_get("/payments/orders", api_key, {"locationId": location_id, "limit": "50"})
+    time.sleep(0.25)
 
-    # 16. Brand Boards (colors, fonts)
-    print("[16/17] Fetching brand boards...")
-    audit["sections"]["brand_boards"] = api_get(f"/brand-boards/{location_id}", api_key)
+    tick("Fetching SMS/email templates...")
+    s["templates"] = api_get(f"/locations/{location_id}/templates", api_key)
+    time.sleep(0.25)
 
-    # 17. Funnels (may contain styling)
-    print("[17/17] Fetching funnels...")
-    audit["sections"]["funnels"] = api_get("/funnels/funnel/list", api_key, {"locationId": location_id})
+    tick("Fetching brand boards...")
+    s["brand_boards"] = api_get(f"/brand-boards/{location_id}", api_key)
+    time.sleep(0.25)
+
+    tick("Fetching funnels list...")
+    s["funnels"] = api_get("/funnels/funnel/list", api_key, {"locationId": location_id})
+    time.sleep(0.25)
+
+    tick("Fetching products...")
+    s["products"] = api_get("/products/", api_key, {"locationId": location_id})
+    time.sleep(0.25)
+
+    tick("Fetching blogs...")
+    s["blogs"] = api_get("/blogs/", api_key, {"locationId": location_id})
+    time.sleep(0.25)
+
+    tick("Fetching users for location...")
+    s["users"] = api_get("/users/", api_key, {"locationId": location_id})
+    time.sleep(0.25)
+
+    tick("Fetching form submissions (recent sample)...")
+    s["forms_submissions"] = api_get(
+        "/forms/submissions",
+        api_key,
+        {"locationId": location_id, "limit": "50"},
+    )
+    time.sleep(0.25)
+
+    tick("Fetching survey submissions (recent sample)...")
+    s["surveys_submissions"] = api_get(
+        f"/locations/{location_id}/surveys/submissions",
+        api_key,
+        {"limit": "50"},
+    )
+    time.sleep(0.25)
+
+    tick("Fetching invoices (sample)...")
+    s["invoices"] = api_get("/invoices/", api_key, {"locationId": location_id, "limit": "50"})
+    time.sleep(0.25)
+
+    tick("Fetching estimates (sample)...")
+    s["estimates"] = api_get("/estimates/", api_key, {"locationId": location_id, "limit": "50"})
+    time.sleep(0.25)
+
+    if deep:
+        tick("DEEP: per-workflow, form, survey, calendar payloads...")
+        deep_blob = {
+            "workflows_by_id": {},
+            "forms_by_id": {},
+            "surveys_by_id": {},
+            "calendars_by_id": {},
+            "templates_by_id": {},
+        }
+        wf_items = _list_from_section(s["workflows"], ("workflows",))
+        for item in wf_items:
+            if not isinstance(item, dict) or not item.get("id"):
+                continue
+            wid = item["id"]
+            deep_blob["workflows_by_id"][str(wid)] = api_get(f"/workflows/{wid}", api_key, {"locationId": location_id})
+            time.sleep(0.22)
+
+        form_items = _list_from_section(s["forms"], ("forms",))
+        for item in form_items:
+            if not isinstance(item, dict) or not item.get("id"):
+                continue
+            fid = item["id"]
+            deep_blob["forms_by_id"][str(fid)] = api_get(f"/forms/{fid}", api_key, {"locationId": location_id})
+            time.sleep(0.22)
+
+        survey_items = _list_from_section(s["surveys"], ("surveys",))
+        for item in survey_items:
+            if not isinstance(item, dict) or not item.get("id"):
+                continue
+            sid = item["id"]
+            deep_blob["surveys_by_id"][str(sid)] = api_get(f"/surveys/{sid}", api_key, {"locationId": location_id})
+            time.sleep(0.22)
+
+        cal_items = _list_from_section(s["calendars"], ("calendars",))
+        for item in cal_items:
+            if not isinstance(item, dict) or not item.get("id"):
+                continue
+            cid = item["id"]
+            # Single-calendar GET often works without duplicating locationId in query
+            r = api_get(f"/calendars/{cid}", api_key, {"locationId": location_id})
+            if isinstance(r, dict) and r.get("error") == 400:
+                r = api_get(f"/calendars/{cid}", api_key, {})
+            deep_blob["calendars_by_id"][str(cid)] = r
+            time.sleep(0.22)
+
+        tmpl_items = _list_from_section(s["templates"], ("templates",))
+        for item in tmpl_items:
+            if not isinstance(item, dict) or not item.get("id"):
+                continue
+            tid = item["id"]
+            deep_blob["templates_by_id"][str(tid)] = api_get(
+                f"/locations/{location_id}/templates/{tid}",
+                api_key,
+                {},
+            )
+            time.sleep(0.22)
+
+        s["deep"] = deep_blob
 
     return audit
 
@@ -225,7 +359,11 @@ def analyze_contacts(contacts_data):
         "tag_distribution": {},
     }
 
-    contacts = contacts_data.get("contacts", []) if isinstance(contacts_data, dict) else []
+    if not isinstance(contacts_data, dict) or "error" in contacts_data:
+        analysis["note"] = "contacts section missing or API error — analysis skipped"
+        return analysis
+
+    contacts = contacts_data.get("contacts", [])
     analysis["total_sampled"] = len(contacts)
 
     for c in contacts:
@@ -245,7 +383,7 @@ def analyze_contacts(contacts_data):
             for field in cf:
                 key = field.get("key", field.get("id", ""))
                 val = field.get("value", field.get("field_value", ""))
-                if "qualification_score" in str(key) and val:
+                if ("qualification_score" in str(key) or "lead_score" in str(key)) and val:
                     analysis["with_qualification_score"] += 1
                 if "budget_range" in str(key) and val:
                     analysis["with_budget_range"] += 1
@@ -255,7 +393,7 @@ def analyze_contacts(contacts_data):
                     analysis["with_service_phase"] += 1
         elif isinstance(cf, dict):
             for key, val in cf.items():
-                if "qualification_score" in key and val:
+                if ("qualification_score" in key or "lead_score" in key) and val:
                     analysis["with_qualification_score"] += 1
                 if "budget_range" in key and val:
                     analysis["with_budget_range"] += 1
@@ -271,7 +409,17 @@ def main():
     parser = argparse.ArgumentParser(description="GHL Sub-Account Audit Collector")
     parser.add_argument("--api-key", required=True, help="GHL Private Integration API Key")
     parser.add_argument("--location-id", required=True, help="GHL Location ID (Settings → Company → Locations)")
-    parser.add_argument("--output", default="audit_data.json", help="Output file path")
+    parser.add_argument("--output", default="audit_data.json", help="Output JSON path")
+    parser.add_argument(
+        "--deep",
+        action="store_true",
+        help="Fetch per-ID workflow, form, survey, calendar, and template payloads (slower; best for Claude)",
+    )
+    parser.add_argument(
+        "--markdown",
+        metavar="PATH",
+        help="After JSON is written, also write a thorough Markdown export to PATH (imports ghl_audit_to_markdown)",
+    )
     args = parser.parse_args()
 
     print("=" * 60)
@@ -280,18 +428,21 @@ def main():
     print(f"API Key: {args.api_key[:10]}...{args.api_key[-4:]}")
     print(f"Location ID: {args.location_id}")
     print(f"Output: {args.output}")
+    print(f"Deep mode: {args.deep}")
     print()
 
-    audit = collect_all(args.api_key, args.location_id)
+    audit = collect_all(args.api_key, args.location_id, deep=args.deep)
 
-    # Run contact analysis
+    # Run contact analysis (skip if contacts call failed)
     if "contacts" in audit["sections"]:
-        print("\nAnalyzing contact data quality...")
-        audit["analysis"] = {
-            "contacts": analyze_contacts(audit["sections"]["contacts"])
-        }
+        csec = audit["sections"]["contacts"]
+        if isinstance(csec, dict) and "error" not in csec:
+            print("\nAnalyzing contact data quality...")
+            audit["analysis"] = {"contacts": analyze_contacts(csec)}
+        elif isinstance(csec, dict) and "error" in csec:
+            audit["analysis"] = {"contacts": {"skipped": True, "reason": "contacts API error", "detail": csec}}
 
-    with open(args.output, "w") as f:
+    with open(args.output, "w", encoding="utf-8") as f:
         json.dump(audit, f, indent=2, default=str)
 
     print(f"\nAudit data saved to {args.output}")
@@ -314,15 +465,33 @@ def main():
 
     if "analysis" in audit:
         ca = audit["analysis"]["contacts"]
-        print(f"\n--- Contact Analysis ({ca['total_sampled']} sampled) ---")
-        print(f"  With qualification score: {ca['with_qualification_score']}")
-        print(f"  With budget range: {ca['with_budget_range']}")
-        print(f"  With lead temperature: {ca['with_lead_temperature']}")
-        print(f"  With service phase: {ca['with_service_phase']}")
-        print(f"  With email: {ca['with_email']}")
-        print(f"  With phone: {ca['with_phone']}")
-        if ca["tag_distribution"]:
-            print(f"  Tag distribution: {json.dumps(ca['tag_distribution'], indent=4)}")
+        if ca.get("skipped"):
+            print("\n--- Contact Analysis: skipped (API error) ---")
+        else:
+            print(f"\n--- Contact Analysis ({ca.get('total_sampled', 0)} sampled) ---")
+            print(f"  With qualification/lead score: {ca.get('with_qualification_score', 0)}")
+            print(f"  With budget range: {ca.get('with_budget_range', 0)}")
+            print(f"  With lead temperature: {ca.get('with_lead_temperature', 0)}")
+            print(f"  With service phase: {ca.get('with_service_phase', 0)}")
+            print(f"  With email: {ca.get('with_email', 0)}")
+            print(f"  With phone: {ca.get('with_phone', 0)}")
+            if ca.get("tag_distribution"):
+                print(f"  Tag distribution: {json.dumps(ca['tag_distribution'], indent=4)}")
+
+    if args.markdown:
+        import os
+        _here = os.path.dirname(os.path.abspath(__file__))
+        if _here not in sys.path:
+            sys.path.insert(0, _here)
+        try:
+            from ghl_audit_to_markdown import build_markdown
+        except ImportError as e:
+            print(f"\nWarning: could not import ghl_audit_to_markdown ({e}).")
+        else:
+            md = build_markdown(audit, args.output)
+            with open(args.markdown, "w", encoding="utf-8") as mf:
+                mf.write(md)
+            print(f"\nMarkdown export written to {args.markdown}")
 
 
 if __name__ == "__main__":

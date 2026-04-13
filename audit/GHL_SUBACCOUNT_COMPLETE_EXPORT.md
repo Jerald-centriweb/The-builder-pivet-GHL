@@ -8,7 +8,8 @@
 
 | File | Content | API Source |
 |------|---------|------------|
-| `audit/audit_data.json` | Pipelines, workflows, custom fields, tags, forms, surveys, calendars, templates, location, brand boards, funnels | ✅ API |
+| `audit/audit_data.json` | Full sub-account API sweep (v2 collector: products, blogs, users, submissions, invoices, estimates, calendar groups, multi-path custom objects, etc.). Use `--deep` for per-ID workflow/form/survey/calendar/template JSON. | ✅ API |
+| `audit/GHL_THOROUGH_ACCOUNT_EXPORT.md` | Everything in `audit_data.json` rendered for Claude (including `isActive` / `draft` as facts, not judgements). Regenerate with `ghl_audit_to_markdown.py`. | From audit_data.json |
 | `audit/GHL_SUBACCOUNT_DUMP.md` | Human-readable structure summary | From audit_data.json |
 | `audit/GHL_WRITTEN_CONTENT_DUMP.md` | Every SMS/email template, survey question, form label, inline copy | Spec (API returns empty) |
 | `audit/GHL_BRANDING_AND_UI_SPEC.md` | Schema for colors, fonts, logos, styling + manual capture checklist | Manual (API limited) |
@@ -44,10 +45,16 @@
 
 ## Recommended Workflow for Full Export
 
-1. **Run audit collector** (gets all API data):
+1. **Run audit collector** (full asset inventory; activation state is included as data only):
    ```bash
-   python3 audit/ghl_audit_collector.py --api-key "YOUR_KEY" --location-id "YOUR_ID" --output audit/audit_data.json
+   python3 audit/ghl_audit_collector.py \
+     --api-key "YOUR_KEY" \
+     --location-id "YOUR_ID" \
+     --output audit/audit_data.json \
+     --deep \
+     --markdown audit/GHL_THOROUGH_ACCOUNT_EXPORT.md
    ```
+   Omit `--deep` for a faster pass (skips per-workflow / per-form detail GETs). You can always run `python3 audit/ghl_audit_to_markdown.py audit/audit_data.json -o audit/GHL_THOROUGH_ACCOUNT_EXPORT.md` later.
 
 2. **Follow branding capture checklist** in `audit/GHL_BRANDING_AND_UI_SPEC.md`
 

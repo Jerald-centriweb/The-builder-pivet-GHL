@@ -63,7 +63,9 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 | `audit/DEEP_SPEC_ANALYSIS.md` | Bugs found in spec + code, architecture risks, what to fix and in what order. |
 | `audit/GHL_VERIFICATION_CHECKLIST.md` | Section-by-section checklist to verify live GHL account against the spec. |
 | `audit/wf03_scoring_engine.py` | External scoring engine for WF-03. Bugs fixed. Deploy to n8n/Cloud Function/Lambda. |
-| `audit/ghl_audit_collector.py` | Pulls live data from GHL. Run on VPS with `--api-key` + `--location-id`. |
+| `audit/ghl_audit_collector.py` | Pulls live data from GHL. Use `--deep` for per-workflow/form/survey/calendar/template payloads; `--markdown PATH` to emit a thorough `.md`. Run on VPS with `--api-key` + `--location-id`. |
+| `audit/ghl_audit_to_markdown.py` | Converts `audit_data.json` → `GHL_THOROUGH_ACCOUNT_EXPORT.md` (full asset dump for Claude). |
+| `audit/GHL_THOROUGH_ACCOUNT_EXPORT.md` | Human-readable export from the collector (regenerate after audits). |
 | `audit/audit_data.json` | Live GHL account data (full JSON dump from collector). |
 | `audit/GHL_SUBACCOUNT_DUMP.md` | Human-readable summary of live sub-account for Claude context. |
 | `audit/GHL_WRITTEN_CONTENT_DUMP.md` | Every word: SMS/email templates, survey questions, form labels, inline copy. |
