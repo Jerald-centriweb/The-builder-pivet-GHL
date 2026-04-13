@@ -66,6 +66,8 @@ It takes a builder from raw inbound enquiry → lead qualification → education
 | `audit/ghl_audit_collector.py` | Pulls live data from GHL. Use `--deep` for per-workflow/form/survey/calendar/template payloads; `--markdown PATH` to emit a thorough `.md`. Run on VPS with `--api-key` + `--location-id`. |
 | `audit/ghl_audit_to_markdown.py` | Converts `audit_data.json` → `GHL_THOROUGH_ACCOUNT_EXPORT.md` (full asset dump for Claude). |
 | `audit/GHL_THOROUGH_ACCOUNT_EXPORT.md` | Human-readable export from the collector (regenerate after audits). |
+| `audit/GHL_PREBUILD_DEMO_FULL_CAPTURE.md` | **MCP + REST merged** — live `user-ghl-prebuild-demo` MCP pull + `audit_data.json`; regenerate via `python3 audit/build_full_capture_md.py` after updating blobs in that script. |
+| `audit/build_full_capture_md.py` | Builds `GHL_PREBUILD_DEMO_FULL_CAPTURE.md`. |
 | `audit/audit_data.json` | Live GHL account data (full JSON dump from collector). |
 | `audit/GHL_SUBACCOUNT_DUMP.md` | Human-readable summary of live sub-account for Claude context. |
 | `audit/GHL_WRITTEN_CONTENT_DUMP.md` | Every word: SMS/email templates, survey questions, form labels, inline copy. |

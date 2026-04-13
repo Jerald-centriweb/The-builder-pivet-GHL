@@ -6,6 +6,7 @@
 |------|------------------------------|
 | **`audit/audit_data.json`** | **Yes.** Produced only by calling the GHL API (`audit/ghl_audit_collector.py`). This is the ground truth for what exists in the location (plus each endpoint’s errors, e.g. 403/404). |
 | **`audit/GHL_THOROUGH_ACCOUNT_EXPORT.md`** | **Yes — but only a rendering of whatever is inside `audit_data.json` at generation time.** Same facts, human-readable. Regenerate after every collector run. |
+| **`audit/GHL_PREBUILD_DEMO_FULL_CAPTURE.md`** | **Yes — merged** live MCP (`user-ghl-prebuild-demo`) + `audit_data.json` in one file. Regenerate with `python3 audit/build_full_capture_md.py` (update MCP blobs in script when re-capturing). |
 | **`PREBUILD_AUTOPILOT_CONTEXT.md`** | **No.** It is the **design spec** (intent, copy, rules). It is not exported from GHL. |
 | **This file (`CLAUDE_BUILD_ANALYSIS_PACKET.md`)** | **Mixed.** It routes you to the right artefacts and lists **priorities inferred** from last known live export + repo notes — not a substitute for `audit_data.json`. |
 
